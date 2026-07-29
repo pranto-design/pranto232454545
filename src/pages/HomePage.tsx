@@ -13,6 +13,7 @@ import {
 } from '@/data/sampleData';
 import { UniversityCard, SectionHeader, RatingStars, UniversityLogo, VerificationBadge } from '@/components/ui';
 import { useCountUp, useInView } from '@/hooks/useAnimations';
+import { useLanguage } from '@/context/LanguageContext';
 
 // ============================================================
 // Animated stat counter
@@ -40,6 +41,7 @@ function HeroSearch() {
   const [search, setSearch] = useState('');
   const [focused, setFocused] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const suggestions = useMemo(() => {
     if (!search.trim()) return [];
@@ -73,23 +75,23 @@ function HeroSearch() {
             onChange={(e) => setSearch(e.target.value)}
             onFocus={() => setFocused(true)}
             onBlur={() => setTimeout(() => setFocused(false), 200)}
-            placeholder="Search universities, programs, subjects..."
+            placeholder={t('hero.search_placeholder')}
             className="flex-1 px-3 py-3 text-ink-800 bg-transparent focus:outline-none text-sm sm:text-base"
           />
           <button type="submit" className="btn-primary px-5 sm:px-8 py-3">
-            Search
+            {t('hero.search_button')}
           </button>
         </div>
       </form>
 
       {/* Autocomplete dropdown */}
-      {focused && search.trim() && suggestions.length > 0 && (
-        <div className="absolute top-full mt-2 w-full bg-white rounded-2xl shadow-2xl border border-ink-200 overflow-hidden z-20 animate-slide-down">
-          {suggestions.map((s, i) => (
+      {focused && suggestions.length > 0 && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-ink-100 overflow-hidden z-50 animate-fade-in">
+          {suggestions.map((s) => (
             <Link
-              key={i}
+              key={s.to}
               to={s.to}
-              className="flex items-center gap-3 px-4 py-3 hover:bg-brand-50 transition-colors border-b border-ink-50 last:border-0"
+              className="flex items-center gap-3 px-4 py-3 hover:bg-brand-50 transition border-b border-ink-50 last:border-0 group"
             >
               <div className="h-9 w-9 rounded-lg bg-brand-50 flex items-center justify-center text-brand-600">
                 <s.icon size={18} />
@@ -107,7 +109,7 @@ function HeroSearch() {
       {/* Popular searches */}
       {!search && (
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-          <span className="text-xs text-brand-200">Popular:</span>
+          <span className="text-xs text-brand-200">{t('hero.popular')}</span>
           {popularSearches.map((p) => (
             <button
               key={p}
@@ -518,52 +520,53 @@ function FeaturedSpotlight() {
 // MAIN HOMEPAGE
 // ============================================================
 const stats = [
-  { label: 'Universities', value: 100, suffix: '+', icon: GraduationCap },
-  { label: 'Programs', value: 1000, suffix: '+', icon: BookOpen },
-  { label: 'Student Discussions', value: 10000, suffix: '+', icon: Users },
-  { label: 'Students Reached', value: 50000, suffix: '+', icon: TrendingUp },
+  { label: 'Universities', value: 20, suffix: '+', icon: GraduationCap },
+  { label: 'Academic Programs', value: 50, suffix: '+', icon: BookOpen },
+  { label: 'Verified Reviews', value: 500, suffix: '+', icon: Users },
+  { label: 'Students Helped', value: 10000, suffix: '+', icon: TrendingUp },
 ];
 
 const quickActions = [
-  { label: 'Find a University', to: '/universities', icon: GraduationCap, color: 'from-brand-500 to-brand-600' },
-  { label: 'Find a Program', to: '/programs', icon: BookOpen, color: 'from-brand-500 to-brand-600' },
-  { label: 'Compare Universities', to: '/compare', icon: GitCompare, color: 'from-accent-500 to-accent-600' },
-  { label: 'Calculate Tuition', to: '/calculator', icon: Calculator, color: 'from-gold-400 to-gold-600' },
-  { label: 'Ask Students', to: '/community', icon: Users, color: 'from-accent-500 to-accent-700' },
+  { label: 'action.find_university', to: '/universities', icon: GraduationCap, color: 'from-brand-500 to-brand-600' },
+  { label: 'action.find_program', to: '/programs', icon: BookOpen, color: 'from-brand-500 to-brand-600' },
+  { label: 'action.compare_universities', to: '/compare', icon: GitCompare, color: 'from-accent-500 to-accent-600' },
+  { label: 'action.calculate_tuition', to: '/calculator', icon: Calculator, color: 'from-gold-400 to-gold-600' },
+  { label: 'action.ask_students', to: '/community', icon: Users, color: 'from-accent-500 to-accent-700' },
 ];
 
 export default function HomePage() {
+  const { t } = useLanguage();
   return (
     <div>
       {/* ===== HERO ===== */}
-      <section className="relative overflow-hidden bg-navy-900 text-white">
+      <section className="relative overflow-hidden bg-brand-900 text-white">
         {/* Realistic campus background photo */}
         <div className="absolute inset-0">
           <img
             src="https://images.pexels.com/photos/207692/pexels-photo-207692.jpeg?auto=compress&cs=tinysrgb&w=1600&h=900&fit=crop"
             alt="University campus"
-            className="h-full w-full object-cover opacity-25"
+            className="h-full w-full object-cover opacity-30"
             loading="eager"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-navy-900/95 via-navy-900/85 to-navy-800/75" />
-          <div className="absolute inset-0 bg-dot-navy opacity-30" style={{ backgroundSize: '32px 32px' }} />
+          <div className="absolute inset-0 bg-gradient-to-br from-brand-900/90 via-brand-800/80 to-accent-900/70" />
+          <div className="absolute inset-0 bg-dot-navy opacity-20" style={{ backgroundSize: '32px 32px' }} />
         </div>
-        {/* Glow accents */}
-        <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-brand-500/15 blur-3xl animate-float-slow" />
-        <div className="absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-accent-500/15 blur-3xl animate-float" />
+        {/* Playful glow accents */}
+        <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-accent-400/20 blur-3xl animate-float-slow" />
+        <div className="absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-brand-400/20 blur-3xl animate-float" />
 
         <div className="container-page relative py-16 lg:py-24">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="max-w-2xl">
               <span className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-1.5 text-xs font-medium backdrop-blur-sm">
                 <span className="h-2 w-2 rounded-full bg-brand-400 animate-pulse" />
-                Fall 2026 Admissions Now Open
+                {t('hero.badge')}
               </span>
               <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-bold font-display leading-[1.1] text-balance">
-                Find the Right University for Your Future
+                {t('hero.title')}
               </h1>
               <p className="mt-5 text-lg text-ink-200 leading-relaxed">
-                Compare private universities in Bangladesh by tuition fees, programs, credits, scholarships, admission requirements, campus life, and student experiences.
+                {t('hero.subtitle')}
               </p>
 
               <div className="mt-8">
@@ -580,7 +583,7 @@ export default function HomePage() {
                     <span className={`h-6 w-6 rounded-lg bg-gradient-to-br ${a.color} flex items-center justify-center`}>
                       <a.icon size={13} />
                     </span>
-                    {a.label}
+                    {t(a.label)}
                   </Link>
                 ))}
               </div>
@@ -598,7 +601,7 @@ export default function HomePage() {
 
       {/* ===== HOW IT WORKS ===== */}
       <section className="container-page py-16">
-        <SectionHeader title="How UniVara Works" subtitle="Four simple steps to find your perfect university match." />
+        <SectionHeader title={t('section.how_it_works.title')} subtitle={t('section.how_it_works.subtitle')} />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {steps.map((step, i) => (
             <div key={step.title} className="relative card p-6 group hover:shadow-card-hover transition-all">
@@ -623,9 +626,9 @@ export default function HomePage() {
       {/* ===== POPULAR UNIVERSITIES ===== */}
       <section className="container-page pb-16">
         <SectionHeader
-          title="Popular Universities"
-          subtitle="Top-rated private universities in Bangladesh, chosen by students."
-          action={<Link to="/universities" className="btn-secondary text-sm">View all <ArrowRight size={15} /></Link>}
+          title={t('section.popular_universities.title')}
+          subtitle={t('section.popular_universities.subtitle')}
+          action={<Link to="/universities" className="btn-secondary text-sm">{t('section.popular_universities.view_all')} <ArrowRight size={15} /></Link>}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {universities.filter((u) => u.featured).slice(0, 6).map((uni) => <UniversityCard key={uni.id} uni={uni} />)}

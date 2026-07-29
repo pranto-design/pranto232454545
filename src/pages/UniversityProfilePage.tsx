@@ -146,13 +146,63 @@ export default function UniversityProfilePage() {
                 </div>
               </div>
               <div className="card p-6">
-                <h3 className="font-semibold mb-3">Faculties & Departments</h3>
-                <div className="space-y-3">
+                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                  <Building2 size={18} className="text-brand-600" />
+                  Faculties & Departments
+                </h3>
+                <div className="space-y-6">
                   {uni.faculties.map((fac) => (
-                    <div key={fac.id} className="border-l-2 border-brand-300 pl-3">
-                      <p className="font-medium text-ink-800 text-sm">{fac.name}</p>
-                      <div className="flex flex-wrap gap-1.5 mt-1.5">
-                        {fac.departments.map((d) => <span key={d} className="chip-muted text-[11px]">{d}</span>)}
+                    <div key={fac.id} className="relative">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="h-1.5 w-1.5 rounded-full bg-brand-500" />
+                        <p className="font-bold text-ink-900 text-sm uppercase tracking-wider">{fac.name}</p>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {fac.departments.map((deptName) => {
+                          const offering = offerings.find((o) => {
+                            const prog = getProgramById(o.programId);
+                            return (
+                              prog?.name.toLowerCase().includes(deptName.toLowerCase()) ||
+                              prog?.slug.toLowerCase() === deptName.toLowerCase() ||
+                              deptName.toLowerCase().includes(prog?.slug.toLowerCase() || '')
+                            );
+                          });
+
+                          if (offering) {
+                            const prog = getProgramById(offering.programId);
+                            return (
+                              <div key={deptName} className="group p-3 rounded-xl bg-ink-50/50 border border-ink-100 hover:border-brand-300 hover:bg-white hover:shadow-md transition-all">
+                                <div className="flex justify-between items-start gap-2">
+                                  <p className="font-bold text-ink-900 text-xs leading-tight">{prog?.name || deptName}</p>
+                                  <div className="text-right shrink-0">
+                                    <p className="text-[10px] font-bold text-brand-700 bg-brand-50 px-1.5 py-0.5 rounded-md">
+                                      {formatBDT(offering.totalTuitionEstimate)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="mt-2 space-y-1.5">
+                                  <div className="flex items-center gap-3 text-[10px] text-ink-500 font-medium">
+                                    <span className="flex items-center gap-1"><Calendar size={10} /> {offering.durationYears}y</span>
+                                    <span className="flex items-center gap-1"><CheckCircle2 size={10} /> {offering.totalCredits} Credits</span>
+                                  </div>
+                                  <div className="flex flex-wrap gap-1">
+                                    <span className="px-1.5 py-0.5 bg-white border border-ink-100 rounded text-[9px] text-ink-600">GPA: {uni.minGPA.toFixed(1)}+</span>
+                                    {offering.admissionRequirements.slice(0, 1).map((r) => (
+                                      <span key={r} className="px-1.5 py-0.5 bg-white border border-ink-100 rounded text-[9px] text-ink-600">{r}</span>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <div key={deptName} className="p-3 rounded-xl bg-ink-50/30 border border-dashed border-ink-200">
+                              <p className="font-semibold text-ink-400 text-xs">{deptName}</p>
+                              <p className="text-[9px] text-ink-400 mt-1 italic">Details pending update</p>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   ))}

@@ -20,9 +20,6 @@ export default function UniversitiesPage() {
   const [division, setDivision] = useState('');
   const [program, setProgram] = useState('');
   const [tuitionMax, setTuitionMax] = useState(0);
-  const [minRating, setMinRating] = useState(0);
-  const [scholarshipOnly, setScholarshipOnly] = useState(false);
-  const [admissionTest, setAdmissionTest] = useState('');
   const [sort, setSort] = useState('popular');
   const [showFilters, setShowFilters] = useState(false);
 
@@ -39,10 +36,6 @@ export default function UniversitiesPage() {
     if (division) list = list.filter((u) => u.division === division);
     if (program) list = list.filter((u) => u.popularPrograms.includes(program));
     if (tuitionMax > 0) list = list.filter((u) => u.tuitionMin <= tuitionMax);
-    if (minRating > 0) list = list.filter((u) => u.rating >= minRating);
-    if (scholarshipOnly) list = list.filter((u) => u.scholarshipAvailable);
-    if (admissionTest === 'yes') list = list.filter((u) => u.admissionTestRequired);
-    if (admissionTest === 'no') list = list.filter((u) => !u.admissionTestRequired);
 
     switch (sort) {
       case 'rating': list.sort((a, b) => b.rating - a.rating); break;
@@ -53,14 +46,14 @@ export default function UniversitiesPage() {
       default: list.sort((a, b) => b.reviewCount - a.reviewCount);
     }
     return list;
-  }, [search, division, program, tuitionMax, minRating, scholarshipOnly, admissionTest, sort]);
+  }, [search, division, program, tuitionMax, sort]);
 
   const resetFilters = () => {
     setSearch(''); setDivision(''); setProgram(''); setTuitionMax(0);
-    setMinRating(0); setScholarshipOnly(false); setAdmissionTest(''); setSort('popular');
+    setSort('popular');
   };
 
-  const activeFilterCount = [division, program, tuitionMax > 0 ? 'x' : '', minRating > 0 ? 'x' : '', scholarshipOnly ? 'x' : '', admissionTest].filter(Boolean).length;
+  const activeFilterCount = [division, program, tuitionMax > 0 ? 'x' : ''].filter(Boolean).length;
 
   return (
     <div className="container-page py-10">
@@ -109,21 +102,6 @@ export default function UniversitiesPage() {
             <option value={1000000}>Under ৳10L</option>
             <option value={1500000}>Under ৳15L</option>
           </select>
-          <select value={minRating} onChange={(e) => setMinRating(Number(e.target.value))} className="input text-sm">
-            <option value={0}>Any Rating</option>
-            <option value={3.5}>3.5+ stars</option>
-            <option value={4.0}>4.0+ stars</option>
-            <option value={4.5}>4.5+ stars</option>
-          </select>
-          <select value={admissionTest} onChange={(e) => setAdmissionTest(e.target.value)} className="input text-sm">
-            <option value="">Admission Test: Any</option>
-            <option value="yes">Required</option>
-            <option value="no">Not Required</option>
-          </select>
-          <label className="flex items-center gap-2 input text-sm cursor-pointer">
-            <input type="checkbox" checked={scholarshipOnly} onChange={(e) => setScholarshipOnly(e.target.checked)} className="rounded text-brand-600" />
-            <Award size={14} /> Scholarship
-          </label>
         </div>
         {activeFilterCount > 0 && (
           <button onClick={resetFilters} className="mt-3 inline-flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700 font-medium">

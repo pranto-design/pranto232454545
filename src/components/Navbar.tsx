@@ -5,20 +5,21 @@ import {
   Award, Users, Bell, ChevronDown,
 } from 'lucide-react';
 import { useCompare } from '@/context/CompareContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 const navItems = [
-  { label: 'Universities', to: '/universities' },
-  { label: 'Programs', to: '/programs' },
-  { label: 'Compare', to: '/compare', icon: GitCompare },
-  { label: 'Calculator', to: '/calculator', icon: Calculator },
-  { label: 'Admission', to: '/admission', icon: Bell },
-  { label: 'Scholarships', to: '/scholarships', icon: Award },
-  { label: 'Community', to: '/community', icon: Users },
+  { label: 'nav.universities', to: '/universities' },
+  { label: 'nav.programs', to: '/programs' },
+  { label: 'nav.compare', to: '/compare', icon: GitCompare },
+  { label: 'nav.calculator', to: '/calculator', icon: Calculator },
+  { label: 'nav.admission', to: '/admission', icon: Bell },
+  { label: 'nav.scholarships', to: '/scholarships', icon: Award },
+  { label: 'nav.community', to: '/community', icon: Users },
 ];
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [lang, setLang] = useState<'en' | 'bn'>('en');
+  const { lang, setLang, t } = useLanguage();
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,7 +49,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-0.5">
+          <nav className="hidden xl:flex items-center gap-0.5">
             {navItems.map((item) => (
               <Link
                 key={item.to}
@@ -56,8 +57,8 @@ export default function Navbar() {
                 className={`nav-link flex items-center gap-1.5 ${isActive(item.to) ? 'nav-link-active' : ''}`}
               >
                 {item.icon && <item.icon size={15} />}
-                {item.label}
-                {item.label === 'Compare' && count > 0 && (
+                {t(item.label)}
+                {item.label === 'nav.compare' && count > 0 && (
                   <span className="ml-0.5 inline-flex items-center justify-center h-4 min-w-4 px-1 rounded-full bg-brand-600 text-white text-[10px] font-bold">
                     {count}
                   </span>
@@ -68,39 +69,37 @@ export default function Navbar() {
 
           {/* Right side */}
           <div className="flex items-center gap-2">
-            <form onSubmit={handleSearch} className="hidden md:flex items-center relative">
-              <Search size={16} className="absolute left-3 text-ink-400 pointer-events-none" />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search..."
-                className="w-40 lg:w-56 rounded-xl border border-ink-200 bg-ink-50/50 pl-9 pr-3 py-2 text-sm focus:bg-white focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:outline-none transition"
-              />
-            </form>
-
             {/* Language switcher */}
-            <div className="hidden sm:flex items-center rounded-lg border border-ink-200 overflow-hidden text-xs font-medium">
+            <div className="flex items-center rounded-lg border border-ink-200 overflow-hidden text-[10px] sm:text-xs font-medium">
               <button
-                onClick={() => setLang('en')}
-                className={`px-2.5 py-1.5 ${lang === 'en' ? 'bg-brand-600 text-white' : 'text-ink-600 hover:bg-ink-100'}`}
+                onClick={() => {
+                  setLang('en');
+                  console.log('Language set to English');
+                }}
+                className={`px-2 py-1 sm:px-2.5 sm:py-1.5 transition-colors ${lang === 'en' ? 'bg-brand-600 text-white' : 'text-ink-600 hover:bg-ink-100'}`}
               >
                 English
               </button>
               <span className="text-ink-300">|</span>
               <button
-                onClick={() => setLang('bn')}
-                className={`px-2.5 py-1.5 ${lang === 'bn' ? 'bg-brand-600 text-white' : 'text-ink-600 hover:bg-ink-100'}`}
+                onClick={() => {
+                  setLang('bn');
+                  console.log('Language set to Bengali');
+                }}
+                className={`px-2 py-1 sm:px-2.5 sm:py-1.5 transition-colors ${lang === 'bn' ? 'bg-brand-600 text-white' : 'text-ink-600 hover:bg-ink-100'}`}
               >
                 বাংলা
               </button>
             </div>
 
-            <Link to="/login" className="btn-ghost hidden sm:inline-flex text-sm">Log in</Link>
-            <Link to="/signup" className="btn-primary hidden sm:inline-flex text-sm">Sign up</Link>
+            <div className="flex items-center gap-2 shrink-0">
+              <Link to="/login" className="btn-ghost text-xs sm:text-sm whitespace-nowrap">{t('nav.login')}</Link>
+              <Link to="/signup" className="btn-primary text-xs sm:text-sm whitespace-nowrap">{t('nav.signup')}</Link>
+            </div>
 
             <button
               onClick={() => setMobileOpen((v) => !v)}
-              className="lg:hidden btn-ghost px-2"
+              className="xl:hidden btn-ghost px-2"
               aria-label="Toggle menu"
             >
               {mobileOpen ? <X size={22} /> : <Menu size={22} />}
@@ -111,17 +110,8 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-ink-200 bg-ink-50 animate-slide-down">
+        <div className="xl:hidden border-t border-ink-200 bg-ink-50 animate-slide-down">
           <div className="container-page py-4 space-y-1">
-            <form onSubmit={handleSearch} className="relative mb-3">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search universities, programs..."
-                className="input pl-9"
-              />
-            </form>
             {navItems.map((item) => (
               <Link
                 key={item.to}
@@ -132,8 +122,8 @@ export default function Navbar() {
                 }`}
               >
                 {item.icon && <item.icon size={16} />}
-                {item.label}
-                {item.label === 'Compare' && count > 0 && (
+                {t(item.label)}
+                {item.label === 'nav.compare' && count > 0 && (
                   <span className="ml-auto inline-flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-brand-600 text-white text-[10px] font-bold">
                     {count}
                   </span>
@@ -141,8 +131,8 @@ export default function Navbar() {
               </Link>
             ))}
             <div className="flex gap-2 pt-3 border-t border-ink-200 mt-2">
-              <Link to="/login" onClick={() => setMobileOpen(false)} className="btn-secondary flex-1">Log in</Link>
-              <Link to="/signup" onClick={() => setMobileOpen(false)} className="btn-primary flex-1">Sign up</Link>
+              <Link to="/login" onClick={() => setMobileOpen(false)} className="btn-secondary flex-1">{t('nav.login')}</Link>
+              <Link to="/signup" onClick={() => setMobileOpen(false)} className="btn-primary flex-1">{t('nav.signup')}</Link>
             </div>
           </div>
         </div>

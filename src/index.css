@@ -11,6 +11,9 @@
   }
   body {
     @apply bg-ink-50 text-ink-800 font-sans antialiased;
+    background-image: radial-gradient(at 0% 0%, rgba(20, 128, 88, 0.05) 0px, transparent 50%),
+                      radial-gradient(at 100% 100%, rgba(25, 155, 151, 0.05) 0px, transparent 50%);
+    background-attachment: fixed;
   }
   h1, h2, h3, h4, h5 {
     @apply font-display tracking-tight text-ink-900;
