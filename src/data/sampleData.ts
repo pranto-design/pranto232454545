@@ -41,11 +41,13 @@ export const universities: University[] = [
     facilities: ['Library', 'Computer Labs', 'Cafeteria', 'Auditorium', 'Sports Complex', 'Medical Center', 'Wi-Fi'],
     admissionTestRequired: true, minGPA: 3.5, rating: 4.2, reviewCount: 521, scholarshipAvailable: true,
     programCount: 24, tuitionMin: 650000, tuitionMax: 1150000,
-    popularPrograms: ['CSE', 'BBA', 'EEE', 'Civil Engineering', 'Architecture'],
+    popularPrograms: ['CSE', 'BBA', 'EEE', 'Architecture', 'Pharmacy', 'Data Science'],
     faculties: [
-      { id: 'f1', name: 'Faculty of Engineering', departments: ['CSE', 'EEE', 'Civil', 'Architecture'] },
-      { id: 'f2', name: 'Faculty of Business Administration', departments: ['BBA', 'MBA'] },
-      { id: 'f3', name: 'Faculty of Arts & Social Sciences', departments: ['English', 'Media'] },
+      { id: 'f1', name: 'Faculty of Science and Technology', departments: ['CSE', 'Data Science', 'Cyber Security'] },
+      { id: 'f2', name: 'Faculty of Engineering', departments: ['Architecture', 'EEE', 'IPE', 'COE'] },
+      { id: 'f3', name: 'Faculty of Business Administration', departments: ['BBA'] },
+      { id: 'f4', name: 'Faculty of Arts & Social Sciences', departments: ['English', 'Journalism', 'Economics', 'LLB'] },
+      { id: 'f5', name: 'Faculty of Health and Life Sciences', departments: ['Pharmacy', 'Biochemistry'] },
     ],
     featured: true, verification: 'university_verified', lastUpdated: '2026-06-18', source: 'University Official Website',
   }
@@ -82,14 +84,14 @@ export const programs: Program[] = [
     description: 'BPharm prepares students for careers in pharmaceuticals, clinical practice, drug research, and the healthcare industry.',
     careerOpportunities: ['Pharmacist', 'Clinical Research Associate', 'Drug Safety Associate', 'Production Officer', 'Quality Control Officer'],
     avgTuitionMin: 550000, avgTuitionMax: 950000, avgCredits: 160, avgDurationYears: 4,
-    offeringUniversityIds: [],
+    offeringUniversityIds: ['u4'],
   },
   {
     id: 'p5', slug: 'civil-engineering', name: 'Civil Engineering', category: 'Engineering',
     description: 'Civil Engineering covers structural, geotechnical, transportation, and environmental engineering for infrastructure development.',
     careerOpportunities: ['Structural Engineer', 'Site Engineer', 'Project Manager', 'Urban Planner', 'Construction Manager'],
     avgTuitionMin: 600000, avgTuitionMax: 1100000, avgCredits: 160, avgDurationYears: 4,
-    offeringUniversityIds: ['u4'],
+    offeringUniversityIds: [],
   },
   {
     id: 'p6', slug: 'architecture', name: 'Architecture', category: 'Architecture',
@@ -103,14 +105,63 @@ export const programs: Program[] = [
     description: 'BA in English covers literature, linguistics, and language studies — a versatile humanities degree.',
     careerOpportunities: ['Teacher', 'Content Writer', 'Editor', 'Translator', 'Communications Officer', 'Journalist'],
     avgTuitionMin: 380000, avgTuitionMax: 850000, avgCredits: 120, avgDurationYears: 4,
-    offeringUniversityIds: ['u1'],
+    offeringUniversityIds: ['u1', 'u4'],
   },
   {
     id: 'p8', slug: 'law', name: 'Law (LLB)', category: 'Law',
     description: 'LLB prepares students for legal practice, judiciary, and corporate legal roles in Bangladesh.',
     careerOpportunities: ['Lawyer', 'Legal Advisor', 'Judge', 'Corporate Counsel', 'Legal Researcher'],
     avgTuitionMin: 380000, avgTuitionMax: 750000, avgCredits: 140, avgDurationYears: 4,
-    offeringUniversityIds: [],
+    offeringUniversityIds: ['u4'],
+  },
+  {
+    id: 'p9', slug: 'journalism', name: 'Journalism and Mass Communication (JMC)', category: 'Arts & Humanities',
+    description: 'BA in JMC covers media studies, journalism, public relations, and digital media.',
+    careerOpportunities: ['Journalist', 'PR Specialist', 'Media Producer', 'Content Creator'],
+    avgTuitionMin: 350000, avgTuitionMax: 700000, avgCredits: 130, avgDurationYears: 4,
+    offeringUniversityIds: ['u4'],
+  },
+  {
+    id: 'p10', slug: 'economics', name: 'Economics', category: 'Arts & Humanities',
+    description: 'BSS in Economics provides a strong foundation in micro, macro, and applied economics.',
+    careerOpportunities: ['Economist', 'Financial Analyst', 'Policy Advisor', 'Researcher'],
+    avgTuitionMin: 350000, avgTuitionMax: 700000, avgCredits: 130, avgDurationYears: 4,
+    offeringUniversityIds: ['u4'],
+  },
+  {
+    id: 'p11', slug: 'ipe', name: 'Industrial and Production Engineering (IPE)', category: 'Engineering',
+    description: 'IPE integrates engineering with management to optimize production processes.',
+    careerOpportunities: ['Production Engineer', 'Quality Assurance Manager', 'Supply Chain Manager'],
+    avgTuitionMin: 600000, avgTuitionMax: 1100000, avgCredits: 148, avgDurationYears: 4,
+    offeringUniversityIds: ['u4'],
+  },
+  {
+    id: 'p12', slug: 'coe', name: 'Computer Engineering (COE)', category: 'Engineering',
+    description: 'COE blends electrical engineering and computer science to develop computing systems.',
+    careerOpportunities: ['Systems Engineer', 'Hardware Engineer', 'Embedded Systems Developer'],
+    avgTuitionMin: 600000, avgTuitionMax: 1100000, avgCredits: 148, avgDurationYears: 4,
+    offeringUniversityIds: ['u4'],
+  },
+  {
+    id: 'p13', slug: 'biochemistry', name: 'Biochemistry and Molecular Biology (BMB)', category: 'Health & Life Sciences',
+    description: 'BMB explores the chemical processes within and related to living organisms.',
+    careerOpportunities: ['Biotechnologist', 'Research Scientist', 'Clinical Laboratory Scientist'],
+    avgTuitionMin: 500000, avgTuitionMax: 900000, avgCredits: 140, avgDurationYears: 4,
+    offeringUniversityIds: ['u4'],
+  },
+  {
+    id: 'p14', slug: 'data-science', name: 'Data Science (DS)', category: 'Computer Science',
+    description: 'Data Science focuses on extracting insights from structured and unstructured data.',
+    careerOpportunities: ['Data Scientist', 'Machine Learning Engineer', 'Data Analyst'],
+    avgTuitionMin: 650000, avgTuitionMax: 1200000, avgCredits: 148, avgDurationYears: 4,
+    offeringUniversityIds: ['u4'],
+  },
+  {
+    id: 'p15', slug: 'cyber-security', name: 'Computer Networks and Cyber Security (CNCS)', category: 'Computer Science',
+    description: 'CNCS trains students in protecting systems, networks, and programs from digital attacks.',
+    careerOpportunities: ['Cyber Security Analyst', 'Network Engineer', 'Security Consultant'],
+    avgTuitionMin: 650000, avgTuitionMax: 1200000, avgCredits: 148, avgDurationYears: 4,
+    offeringUniversityIds: ['u4'],
   },
 ];
 
@@ -131,12 +182,26 @@ const makeOffering = (
 });
 
 export const programOfferings: ProgramOffering[] = [
-  // CSE
+  // BRACU
   makeOffering('o1', 'p1', 'u1', 'BSc', 4, 160, 5500, 25000, 4000, 3000, 5000, ['HSC GPA 4.0+', 'Physics, Math', 'Admission test'], true),
-  makeOffering('o4', 'p1', 'u4', 'BSc', 4, 160, 4200, 15000, 3000, 2500, 4000, ['HSC GPA 3.5+', 'Physics, Math', 'Admission test'], true),
-  
-  // BBA
   makeOffering('o13', 'p2', 'u1', 'BBA', 4, 120, 5000, 25000, 0, 3000, 5000, ['HSC GPA 4.0+', 'Any group', 'Admission test'], true),
+  
+  // AIUB
+  makeOffering('o4', 'p1', 'u4', 'BSc', 4, 148, 8500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true),
+  makeOffering('o14', 'p2', 'u4', 'BBA', 4, 140, 8000, 25000, 0, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Any group', 'Admission test'], true),
+  makeOffering('o15', 'p3', 'u4', 'BSc', 4, 148, 7500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true),
+  makeOffering('o16', 'p6', 'u4', 'BArch', 5, 190, 6500, 25000, 2000, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true),
+  makeOffering('o17', 'p7', 'u4', 'BA', 4, 120, 6500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Any group', 'Admission test'], true),
+  makeOffering('o18', 'p8', 'u4', 'LLB', 4, 140, 8500, 25000, 0, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Any group', 'Admission test'], true),
+  // AIUB Additional Offerings
+  makeOffering('o19', 'p9', 'u4', 'BA', 4, 130, 5000, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Any group', 'Admission test'], true), // JMC
+  makeOffering('o20', 'p10', 'u4', 'BSS', 4, 130, 5500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Any group', 'Admission test'], true), // Economics
+  makeOffering('o21', 'p11', 'u4', 'BSc', 4, 148, 6500, 25000, 2000, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true), // IPE
+  makeOffering('o22', 'p12', 'u4', 'BSc', 4, 148, 6000, 25000, 2000, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true), // COE
+  makeOffering('o23', 'p4', 'u4', 'BPharm', 4, 160, 8500, 25000, 3000, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Biology & Chemistry', 'Admission test'], true), // Pharmacy
+  makeOffering('o24', 'p13', 'u4', 'BSc', 4, 140, 7000, 25000, 3000, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Biology & Chemistry', 'Admission test'], true), // BMB
+  makeOffering('o25', 'p14', 'u4', 'BSc', 4, 148, 8500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true), // DS
+  makeOffering('o26', 'p15', 'u4', 'BSc', 4, 148, 8500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true), // CNCS
 ];
 
 // ============================================================
