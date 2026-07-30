@@ -69,30 +69,33 @@ export default function Navbar() {
 
           {/* Right side */}
           <div className="flex items-center gap-2">
-            {/* Language switcher */}
-            <div className="flex items-center rounded-lg border border-ink-200 overflow-hidden text-[10px] sm:text-xs font-medium">
+            {/* Language switcher — compact on small screens */}
+            <div className="flex items-center rounded-lg border border-ink-200 overflow-hidden font-medium">
               <button
                 onClick={() => {
                   setLang('en');
                   console.log('Language set to English');
                 }}
-                className={`px-2 py-1 sm:px-2.5 sm:py-1.5 transition-colors ${lang === 'en' ? 'bg-brand-600 text-white' : 'text-ink-600 hover:bg-ink-100'}`}
+                className={`text-[10px] sm:text-xs px-1.5 py-1 sm:px-2 sm:py-1.5 transition-colors ${lang === 'en' ? 'bg-brand-600 text-white' : 'text-ink-600 hover:bg-ink-100'}`}
               >
-                English
+                <span className="sm:hidden">EN</span>
+                <span className="hidden sm:inline">English</span>
               </button>
-              <span className="text-ink-300">|</span>
+              <span className="text-ink-300 text-[10px] sm:text-xs">|</span>
               <button
                 onClick={() => {
                   setLang('bn');
                   console.log('Language set to Bengali');
                 }}
-                className={`px-2 py-1 sm:px-2.5 sm:py-1.5 transition-colors ${lang === 'bn' ? 'bg-brand-600 text-white' : 'text-ink-600 hover:bg-ink-100'}`}
+                className={`text-[10px] sm:text-xs px-1.5 py-1 sm:px-2 sm:py-1.5 transition-colors ${lang === 'bn' ? 'bg-brand-600 text-white' : 'text-ink-600 hover:bg-ink-100'}`}
               >
-                বাংলা
+                <span className="sm:hidden">বা</span>
+                <span className="hidden sm:inline">বাংলা</span>
               </button>
             </div>
 
-            <div className="flex items-center gap-2 shrink-0">
+            {/* Login / Signup — hidden on small screens, shown sm+ */}
+            <div className="hidden sm:flex items-center gap-2 shrink-0">
               <Link to="/login" className="btn-ghost text-xs sm:text-sm whitespace-nowrap">{t('nav.login')}</Link>
               <Link to="/signup" className="btn-primary text-xs sm:text-sm whitespace-nowrap">{t('nav.signup')}</Link>
             </div>

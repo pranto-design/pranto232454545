@@ -143,7 +143,7 @@ export const programs: Program[] = [
     offeringUniversityIds: ['u4'],
   },
   {
-    id: 'p13', slug: 'biochemistry', name: 'Biochemistry and Molecular Biology (BMB)', category: 'Health & Life Sciences',
+    id: 'p13', slug: 'biochemistry', name: 'Biochemistry and Molecular Biology (BMB)', category: 'Life Sciences',
     description: 'BMB explores the chemical processes within and related to living organisms.',
     careerOpportunities: ['Biotechnologist', 'Research Scientist', 'Clinical Laboratory Scientist'],
     avgTuitionMin: 500000, avgTuitionMax: 900000, avgCredits: 140, avgDurationYears: 4,

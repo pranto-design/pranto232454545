@@ -68,18 +68,19 @@ function HeroSearch() {
   return (
     <div className="relative max-w-2xl mx-auto">
       <form onSubmit={handleSubmit}>
-        <div className={`flex items-center bg-white rounded-2xl shadow-2xl p-2 transition-all duration-300 ${focused ? 'ring-4 ring-brand-400/30 scale-[1.02]' : ''}`}>
-          <Search size={20} className="text-ink-400 ml-3" />
+        <div className={`flex items-center bg-white rounded-2xl shadow-2xl p-1.5 sm:p-2 transition-all duration-300 ${focused ? 'ring-4 ring-brand-400/30 scale-[1.02]' : ''}`}>
+          <Search size={18} className="text-ink-400 ml-2 sm:ml-3 shrink-0" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onFocus={() => setFocused(true)}
             onBlur={() => setTimeout(() => setFocused(false), 200)}
             placeholder={t('hero.search_placeholder')}
-            className="flex-1 px-3 py-3 text-ink-800 bg-transparent focus:outline-none text-sm sm:text-base"
+            className="flex-1 min-w-0 px-2 sm:px-3 py-2.5 sm:py-3 text-ink-800 bg-transparent focus:outline-none text-xs sm:text-sm lg:text-base"
           />
-          <button type="submit" className="btn-primary px-5 sm:px-8 py-3">
-            {t('hero.search_button')}
+          <button type="submit" className="btn-primary shrink-0 px-3 sm:px-5 lg:px-8 py-2.5 sm:py-3 text-xs sm:text-sm">
+            <span className="sm:hidden"><Search size={16} /></span>
+            <span className="hidden sm:inline">{t('hero.search_button')}</span>
           </button>
         </div>
       </form>
@@ -93,14 +94,14 @@ function HeroSearch() {
               to={s.to}
               className="flex items-center gap-3 px-4 py-3 hover:bg-brand-50 transition border-b border-ink-50 last:border-0 group"
             >
-              <div className="h-9 w-9 rounded-lg bg-brand-50 flex items-center justify-center text-brand-600">
+              <div className="h-9 w-9 rounded-lg bg-brand-50 flex items-center justify-center text-brand-600 shrink-0">
                 <s.icon size={18} />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-ink-800 truncate">{s.label}</p>
-                <p className="text-xs text-ink-500">{s.sub}</p>
+                <p className="text-xs text-ink-500 truncate">{s.sub}</p>
               </div>
-              <span className="chip-muted text-[10px]">{s.type}</span>
+              <span className="chip-muted text-[10px] shrink-0 hidden sm:inline-flex">{s.type}</span>
             </Link>
           ))}
         </div>
@@ -108,13 +109,13 @@ function HeroSearch() {
 
       {/* Popular searches */}
       {!search && (
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-          <span className="text-xs text-brand-200">{t('hero.popular')}</span>
+        <div className="mt-3 sm:mt-4 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+          <span className="text-[11px] sm:text-xs text-brand-200">{t('hero.popular')}</span>
           {popularSearches.map((p) => (
             <button
               key={p}
               onClick={() => navigate(`/search?q=${encodeURIComponent(p)}`)}
-              className="text-xs text-brand-100 hover:text-white bg-white/10 hover:bg-white/20 border border-white/10 rounded-full px-3 py-1 transition"
+              className="text-[11px] sm:text-xs text-brand-100 hover:text-white bg-white/10 hover:bg-white/20 border border-white/10 rounded-full px-2.5 sm:px-3 py-1 transition"
             >
               {p}
             </button>
@@ -555,33 +556,33 @@ export default function HomePage() {
         <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-accent-400/20 blur-3xl animate-float-slow" />
         <div className="absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-brand-400/20 blur-3xl animate-float" />
 
-        <div className="container-page relative py-16 lg:py-24">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="max-w-2xl">
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-1.5 text-xs font-medium backdrop-blur-sm">
+        <div className="container-page relative py-12 sm:py-16 lg:py-24">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+            <div className="max-w-2xl text-center lg:text-left">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3 sm:px-4 py-1.5 text-xs font-medium backdrop-blur-sm">
                 <span className="h-2 w-2 rounded-full bg-brand-400 animate-pulse" />
                 {t('hero.badge')}
               </span>
-              <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-bold font-display leading-[1.1] text-balance">
+              <h1 className="mt-5 sm:mt-6 text-3xl sm:text-4xl lg:text-6xl font-bold font-display leading-[1.1] text-balance">
                 {t('hero.title')}
               </h1>
-              <p className="mt-5 text-lg text-ink-200 leading-relaxed">
+              <p className="mt-4 sm:mt-5 text-base sm:text-lg text-ink-200 leading-relaxed">
                 {t('hero.subtitle')}
               </p>
 
-              <div className="mt-8">
+              <div className="mt-7 sm:mt-8">
                 <HeroSearch />
               </div>
 
-              <div className="mt-6 flex flex-wrap justify-center lg:justify-start gap-2">
+              <div className="mt-5 sm:mt-6 flex flex-wrap justify-center lg:justify-start gap-2">
                 {quickActions.map((a) => (
                   <Link
                     key={a.to}
                     to={a.to}
-                    className="group inline-flex items-center gap-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 text-sm font-medium transition backdrop-blur-sm hover:scale-105"
+                    className="group inline-flex items-center gap-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition backdrop-blur-sm hover:scale-105"
                   >
-                    <span className={`h-6 w-6 rounded-lg bg-gradient-to-br ${a.color} flex items-center justify-center`}>
-                      <a.icon size={13} />
+                    <span className={`h-5 sm:h-6 w-5 sm:w-6 rounded-lg bg-gradient-to-br ${a.color} flex items-center justify-center`}>
+                      <a.icon size={11} />
                     </span>
                     {t(a.label)}
                   </Link>
@@ -593,7 +594,7 @@ export default function HomePage() {
           </div>
 
           {/* Stats */}
-          <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+          <div className="mt-12 sm:mt-16 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">
             {stats.map((s) => <StatCounter key={s.label} {...s} />)}
           </div>
         </div>

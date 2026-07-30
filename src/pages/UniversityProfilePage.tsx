@@ -1,6 +1,10 @@
 import { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import {
+  ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Bar,
+  PieChart as RePieChart, Pie, Cell,
+} from 'recharts';
 import type { LucideIcon } from 'lucide-react';
 import {
   Globe, Mail, Phone, MapPin, Building2, Award, Calendar, Users,
@@ -208,14 +212,33 @@ export default function UniversityProfilePage() {
     { q: `Is ${uni.name} accredited by UGC?`, a: `Yes — ${uni.name} is fully approved and accredited by the University Grants Commission (UGC) of Bangladesh. ${uni.accreditation}` },
   ];
 
+  const tuitionChartData = useMemo(() => {
+    return offerings.slice(0, 6).map((o) => {
+      const p = getProgramById(o.programId);
+      return {
+        name: (p?.name || 'Program').slice(0, 8),
+        Tuition: Math.round(o.totalTuitionEstimate / 100000) * 100000,
+      };
+    });
+  }, [offerings]);
+
+  const pieData = [
+    { name: 'Tuition', value: 70, color: '#0F766E' },
+    { name: 'Admission', value: 8, color: '#0891B2' },
+    { name: 'Lab / Semester', value: 14, color: '#D97706' },
+    { name: 'Other Fees', value: 8, color: '#7C3AED' },
+  ];
+
+  type TabId = 'overview' | 'programs' | 'tuition' | 'admission' | 'scholarships' | 'campus' | 'reviews' | 'community' | 'contact';
+
   return (
     <div className="min-h-screen">
       {/* ================================================================ */}
-      {/* PREMIUM HERO SECTION */}
+      {/* PREMIUM HERO SECTION (COMPACT — MOBILE-OPTIMIZED) */}
       {/* ================================================================ */}
       <section className="relative overflow-hidden">
-        {/* Cover Image Layer */}
-        <div className="absolute inset-0 h-[520px] sm:h-[560px]">
+        {/* Cover Image Layer — smaller on tiny screens */}
+        <div className="absolute inset-0 h-[300px] sm:h-[380px] lg:h-[420px]">
           <img
             src={`https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${encodeURIComponent(`modern university campus building with glass facade, green courtyard, students walking, professional photography, golden hour lighting, wide angle, hyperrealistic`)}&image_size=landscape_16_9`}
             alt={`${uni.name} campus`}
@@ -227,34 +250,34 @@ export default function UniversityProfilePage() {
         </div>
 
         <div className="relative">
-          {/* Breadcrumb */}
-          <div className="container-page pt-8 sm:pt-10">
-            <nav aria-label="Breadcrumb" className="text-sm text-white/60 flex items-center gap-2 flex-wrap">
+          {/* Breadcrumb — tighter on mobile */}
+          <div className="container-page pt-4 sm:pt-5 lg:pt-6">
+            <nav aria-label="Breadcrumb" className="text-[11px] sm:text-sm text-white/60 flex items-center gap-1.5 sm:gap-2 flex-wrap">
               <Link to="/" className="hover:text-white transition-colors">Home</Link>
-              <ChevronRight size={14} className="opacity-50" />
+              <ChevronRight size={12} className="opacity-50 shrink-0" />
               <Link to="/universities" className="hover:text-white transition-colors">Universities</Link>
-              <ChevronRight size={14} className="opacity-50" />
-              <span className="text-white">{uni.name}</span>
+              <ChevronRight size={12} className="opacity-50 shrink-0" />
+              <span className="text-white truncate">{uni.shortName}</span>
             </nav>
           </div>
 
-          {/* Hero Content */}
-          <div className="container-page pt-8 sm:pt-10 pb-12 sm:pb-16">
+          {/* Hero Content — compact, mobile-first */}
+          <div className="container-page pt-5 sm:pt-6 lg:pt-7 pb-7 sm:pb-8 lg:pb-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start"
+              className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-8 items-start"
             >
               {/* Logo + Info */}
               <div className="lg:col-span-8">
-                <div className="flex flex-col sm:flex-row sm:items-start gap-5">
+                <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
                   <div className="relative shrink-0">
                     <motion.div
                       initial={{ scale: 0.85, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ duration: 0.5, delay: 0.1, type: 'spring', stiffness: 200 }}
-                      className={`h-24 w-24 sm:h-28 sm:w-28 rounded-[28px] bg-gradient-to-br ${uni.logoColor} text-white flex items-center justify-center font-bold text-3xl sm:text-4xl font-display shadow-[0_20px_50px_-12px_rgba(0,0,0,0.4)] ring-4 ring-white/10`}
+                      className={`h-16 w-16 sm:h-20 sm:w-20 lg:h-22 lg:w-22 rounded-2xl sm:rounded-[24px] bg-gradient-to-br ${uni.logoColor} text-white flex items-center justify-center font-bold text-xl sm:text-2xl lg:text-3xl font-display shadow-[0_20px_50px_-12px_rgba(0,0,0,0.4)] ring-4 ring-white/10`}
                     >
                       {uni.logoInitials}
                     </motion.div>
@@ -262,82 +285,84 @@ export default function UniversityProfilePage() {
                       initial={{ opacity: 0, scale: 0 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.4, delay: 0.35, type: 'spring' }}
-                      className="absolute -bottom-2 -right-2 h-9 w-9 rounded-2xl bg-emeraldAccent-500 text-white flex items-center justify-center shadow-lg ring-4 ring-white/20"
+                      className="absolute -bottom-1.5 sm:-bottom-2 -right-1.5 sm:-right-2 h-6 w-6 sm:h-8 sm:w-8 rounded-lg sm:rounded-xl bg-emeraldAccent-500 text-white flex items-center justify-center shadow-lg ring-4 ring-white/20"
                     >
-                      <Shield size={16} strokeWidth={2.5} />
+                      <Shield size={12} strokeWidth={2.5} />
                     </motion.div>
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
                       <VerificationBadge status={uni.verification} />
                       {uni.featured && (
-                        <span className="chip bg-warningSaaS-500/15 text-warningSaaS-300 border border-warningSaaS-400/30">
-                          <Sparkles size={12} /> Featured
+                        <span className="chip bg-warningSaaS-500/15 text-warningSaaS-300 border border-warningSaaS-400/30 text-[10px] sm:text-xs">
+                          <Sparkles size={11} /> Featured
                         </span>
                       )}
-                      <span className="chip bg-white/10 text-white/80 border border-white/15">
-                        <Award size={12} /> Ranked #{universities.findIndex(u => u.id === uni.id) + 1} in BD
+                      <span className="chip bg-white/10 text-white/80 border border-white/15 text-[10px] sm:text-xs">
+                        <Award size={11} /> #{universities.findIndex(u => u.id === uni.id) + 1} in BD
                       </span>
                     </div>
-                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-[1.1]">
+                    <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold tracking-tight text-white leading-[1.15] sm:leading-[1.1]">
                       {uni.name}
                     </h1>
-                    <p className="mt-2 text-base sm:text-lg text-white/70 font-medium">
-                      {uni.shortName} • Established {uni.established} • {uni.accreditation.split('.')[0]}
+                    <p className="mt-1.5 sm:mt-2 text-sm sm:text-base lg:text-lg text-white/70 font-medium">
+                      {uni.shortName} • Est. {uni.established} • {uni.accreditation.split('.')[0]}
                     </p>
 
-                    <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-white/75">
-                      <span className="flex items-center gap-2">
-                        <span className="flex items-center justify-center h-8 w-8 rounded-xl bg-white/10 border border-white/10">
-                          <MapPin size={15} />
+                    {/* Info badges — compact, grid-like on tiny screens */}
+                    <div className="mt-3 sm:mt-4 grid grid-cols-2 gap-x-3 gap-y-2 text-[11px] sm:text-sm text-white/75">
+                      <span className="flex items-center gap-2 min-w-0">
+                        <span className="flex items-center justify-center h-6 w-6 sm:h-7 sm:w-7 rounded-md sm:rounded-lg bg-white/10 border border-white/10 shrink-0">
+                          <MapPin size={11} strokeWidth={2.2} />
                         </span>
-                        {uni.location}, {uni.division}
+                        <span className="truncate">{uni.location}</span>
                       </span>
-                      <span className="flex items-center gap-2">
-                        <span className="flex items-center justify-center h-8 w-8 rounded-xl bg-white/10 border border-white/10">
-                          <Landmark size={15} />
+                      <span className="flex items-center gap-2 min-w-0">
+                        <span className="flex items-center justify-center h-6 w-6 sm:h-7 sm:w-7 rounded-md sm:rounded-lg bg-white/10 border border-white/10 shrink-0">
+                          <Landmark size={11} strokeWidth={2.2} />
                         </span>
-                        {uni.established} Years of Excellence
+                        <span>{uni.established} Yrs</span>
                       </span>
-                      <span className="flex items-center gap-2">
-                        <span className="flex items-center justify-center h-8 w-8 rounded-xl bg-white/10 border border-white/10">
-                          <GraduationCap size={15} />
+                      <span className="flex items-center gap-2 min-w-0">
+                        <span className="flex items-center justify-center h-6 w-6 sm:h-7 sm:w-7 rounded-md sm:rounded-lg bg-white/10 border border-white/10 shrink-0">
+                          <GraduationCap size={11} strokeWidth={2.2} />
                         </span>
-                        {uni.programCount} Programs
+                        <span>{uni.programCount} Programs</span>
                       </span>
-                      <span className="flex items-center gap-2">
-                        <span className="flex items-center justify-center h-8 w-8 rounded-xl bg-white/10 border border-white/10">
-                          <Users size={15} />
+                      <span className="flex items-center gap-2 min-w-0">
+                        <span className="flex items-center justify-center h-6 w-6 sm:h-7 sm:w-7 rounded-md sm:rounded-lg bg-white/10 border border-white/10 shrink-0">
+                          <Users size={11} strokeWidth={2.2} />
                         </span>
-                        {uni.reviewCount.toLocaleString()}+ Students
+                        <span>{(uni.reviewCount >= 1000 ? (uni.reviewCount/1000).toFixed(1)+'K' : uni.reviewCount)}+</span>
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Action Buttons */}
+                {/* Action Buttons — responsive: column on tiny, row on sm+ */}
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="mt-8 flex flex-wrap gap-3"
+                  className="mt-5 sm:mt-6 grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-2.5"
                 >
-                  <button className="btn-primary text-base px-7 py-3.5">
-                    <Send size={16} strokeWidth={2.2} /> Apply Now
+                  <button className="btn-primary text-[12px] sm:text-sm px-3 sm:px-6 py-2.5 sm:py-3 col-span-2 sm:col-span-1">
+                    <Send size={14} strokeWidth={2.2} /> Apply Now
                   </button>
                   <a
                     href={uni.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn-secondary text-base px-7 py-3.5 !bg-white/10 !text-white !border-white/20 hover:!bg-white/15"
+                    className="btn-secondary text-[12px] sm:text-sm px-3 sm:px-6 py-2.5 sm:py-3 !bg-white/10 !text-white !border-white/20 hover:!bg-white/15 col-span-2 sm:col-span-1"
                   >
-                    <Globe size={16} /> Visit Website <ExternalLink size={13} />
+                    <Globe size={14} /> Website <ExternalLink size={11} />
                   </a>
                   <SaveButton universityId={uni.id} />
                   <CompareButton universityId={uni.id} />
-                  <button className="btn-secondary !px-4 !py-3" aria-label="Share">
-                    <Share2 size={17} />
+                  <button className="btn-secondary !px-3 !py-2.5 col-span-2 sm:col-span-1 sm:!w-auto" aria-label="Share">
+                    <Share2 size={16} />
+                    <span className="sm:hidden ml-2 text-xs">Share</span>
                   </button>
                 </motion.div>
               </div>
@@ -347,29 +372,29 @@ export default function UniversityProfilePage() {
       </section>
 
       {/* ================================================================ */}
-      {/* STICKY TABS NAV */}
+      {/* STICKY TABS NAV — more compact on mobile */}
       {/* ================================================================ */}
       <div className="sticky top-16 z-30 border-y border-borderLine bg-white/85 backdrop-blur-xl shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
         <div className="container-page">
-          <div className="flex gap-1 overflow-x-auto no-scrollbar py-3">
-            {[
-              { id: 'overview', label: 'Overview', icon: BookOpen },
-              { id: 'programs', label: 'Programs', icon: GraduationCap },
-              { id: 'tuition', label: 'Tuition & Fees', icon: CreditCard },
-              { id: 'admission', label: 'Admission', icon: FileCheck },
-              { id: 'scholarships', label: 'Scholarships', icon: Award },
-              { id: 'campus', label: 'Campus', icon: Home },
-              { id: 'reviews', label: 'Reviews', icon: Star },
-              { id: 'community', label: 'Community', icon: MessageSquare },
-              { id: 'contact', label: 'Contact', icon: PhoneIcon },
-            ].map((tab) => (
+          <div className="flex gap-0.5 sm:gap-1 overflow-x-auto no-scrollbar py-2 sm:py-3">
+            {([
+              { id: 'overview' as const, label: 'Overview', icon: BookOpen },
+              { id: 'programs' as const, label: 'Programs', icon: GraduationCap },
+              { id: 'tuition' as const, label: 'Tuition', icon: CreditCard },
+              { id: 'admission' as const, label: 'Admission', icon: FileCheck },
+              { id: 'scholarships' as const, label: 'Aid', icon: Award },
+              { id: 'campus' as const, label: 'Campus', icon: Home },
+              { id: 'reviews' as const, label: 'Reviews', icon: Star },
+              { id: 'community' as const, label: 'Posts', icon: MessageSquare },
+              { id: 'contact' as const, label: 'Contact', icon: PhoneIcon },
+            ]).map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`tab !px-4 !py-2.5 flex items-center gap-2 ${activeTab === tab.id ? 'tab-active' : ''}`}
+                onClick={() => setActiveTab(tab.id as TabId)}
+                className={`tab !px-2.5 sm:!px-4 !py-2 sm:!py-2.5 flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs flex-shrink-0 ${activeTab === tab.id ? 'tab-active' : ''}`}
               >
-                <tab.icon size={15} strokeWidth={2.2} />
-                <span className="hidden sm:inline">{tab.label}</span>
+                <tab.icon size={14} strokeWidth={2.2} />
+                <span>{tab.label}</span>
               </button>
             ))}
           </div>
@@ -377,16 +402,16 @@ export default function UniversityProfilePage() {
       </div>
 
       {/* ================================================================ */}
-      {/* MAIN CONTENT + STICKY SIDEBAR */}
+      {/* MAIN CONTENT + STICKY SIDEBAR — compact padding on mobile */}
       {/* ================================================================ */}
-      <div className="container-page py-10 sm:py-14">
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 lg:gap-10 items-start">
+      <div className="container-page py-8 sm:py-10 lg:py-14">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 items-start">
           {/* ==================== 70% MAIN CONTENT ==================== */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="xl:col-span-8 space-y-14 sm:space-y-20"
+            className="xl:col-span-8 space-y-12 sm:space-y-14 lg:space-y-20"
           >
             {/* ================= OVERVIEW TAB ================= */}
             <AnimatePresence mode="wait">
@@ -397,19 +422,19 @@ export default function UniversityProfilePage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.4, ease: 'easeOut' }}
-                  className="space-y-14 sm:space-y-20"
+                  className="space-y-12 sm:space-y-14 lg:space-y-20"
                 >
                   {/* About */}
                   <motion.section variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}>
-                    <div className="section-header">
-                      <span className="section-eyebrow"><Leaf size={14} /> About the University</span>
-                      <h2 className="section-title text-3xl sm:text-4xl">About {uni.name}</h2>
-                      <p className="section-sub max-w-2xl text-lg mt-3 leading-relaxed">
-                        Discover the history, mission, and values that shape one of Bangladesh's leading private institutions.
+                    <div className="section-header mb-6 md:mb-10">
+                      <span className="section-eyebrow"><Leaf size={14} /> About</span>
+                      <h2 className="section-title text-2xl sm:text-3xl lg:text-4xl">About {uni.shortName}</h2>
+                      <p className="section-sub max-w-2xl text-sm sm:text-base lg:text-lg mt-2 sm:mt-3 leading-relaxed">
+                        Discover the history, mission, and values of one of Bangladesh's leading private institutions.
                       </p>
                     </div>
-                    <div className="card p-8 sm:p-10">
-                      <p className="text-ink-600 leading-[1.9] text-base">
+                    <div className="card p-5 sm:p-8 lg:p-10">
+                      <p className="text-ink-600 leading-[1.8] sm:leading-[1.9] text-sm sm:text-base">
                         {uni.description}
                       </p>
                     </div>
@@ -1798,7 +1823,7 @@ export default function UniversityProfilePage() {
                           <p className="text-xs font-bold uppercase tracking-wider text-ink-400">Upcoming Deadline</p>
                         </div>
                         <h4 className="text-lg font-bold text-ink-900 mt-2 mb-1 leading-tight">{nextDeadline.title}</h4>
-                        <p className="text-sm text-ink-500 mb-4">{nextDeadline.intake}</p>
+                        <p className="text-sm text-ink-500 mb-4">Application: {new Date(nextDeadline.applicationStart).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} Intake</p>
                         <div className="grid grid-cols-2 gap-3 mb-5">
                           <div className="bg-ink-50 border border-borderLine rounded-2xl p-3 text-center">
                             <p className="text-[10px] font-bold uppercase text-ink-400 tracking-wider">Apply By</p>
@@ -1809,13 +1834,13 @@ export default function UniversityProfilePage() {
                             <p className="text-2xl font-black text-primary-700 mt-0.5 leading-none">{daysLeft}</p>
                           </div>
                         </div>
-                        {nextDeadline.testDate && (
+                        {nextDeadline.admissionTestDate && (
                           <div className="flex items-center gap-2 text-xs text-ink-600 mb-4 bg-ink-50 px-3 py-2 rounded-xl border border-borderLine">
                             <Target size={13} className="text-blueSaaS-600 shrink-0" />
-                            <span className="font-medium">Admission Test: <span className="font-bold">{new Date(nextDeadline.testDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span></span>
+                            <span className="font-medium">Admission Test: <span className="font-bold">{new Date(nextDeadline.admissionTestDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span></span>
                           </div>
                         )}
-                        <a href={nextDeadline.applyLink || '#'} className="btn-primary w-full flex items-center justify-center gap-2 text-sm py-2.5">
+                        <a href={nextDeadline.applicationLink || '#'} className="btn-primary w-full flex items-center justify-center gap-2 text-sm py-2.5">
                           <Send size={15} /> Apply Now
                         </a>
                       </div>
