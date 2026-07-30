@@ -17,10 +17,6 @@ import {
   UserCog, FileCheck, PenLine,
 } from 'lucide-react';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart as RePieChart, Pie, Cell,
-} from 'recharts';
-import {
   getUniversity, getOfferingsByUniversity, getReviewsByUniversity,
   getScholarshipsByUniversity, getNoticesByUniversity, getPostsByUniversity,
   getProgramById, formatBDT, formatBDTFull, universities,
@@ -155,24 +151,6 @@ export default function UniversityProfilePage() {
       avgRatings[k] = uniReviews.reduce((s, r) => s + r.ratings[k], 0) / uniReviews.length;
     });
   }
-
-  const tuitionChartData = useMemo(() => {
-    return offerings.slice(0, 6).map((o) => {
-      const prog = getProgramById(o.programId);
-      return {
-        name: prog?.slug.toUpperCase() || 'N/A',
-        Tuition: Math.round(o.totalTuitionEstimate / 1000),
-        Admission: Math.round(o.admissionFee / 1000),
-      };
-    });
-  }, [offerings]);
-
-  const pieData = [
-    { name: 'Tuition', value: 72, color: '#0F766E' },
-    { name: 'Admission', value: 8, color: '#10B981' },
-    { name: 'Lab & Other', value: 12, color: '#2563EB' },
-    { name: 'Semester Fees', value: 8, color: '#F59E0B' },
-  ];
 
   const filteredOfferings = useMemo(() => {
     let list = [...offerings];
@@ -363,75 +341,6 @@ export default function UniversityProfilePage() {
                   </button>
                 </motion.div>
               </div>
-
-              {/* Rating Card */}
-              <motion.div
-                initial={{ opacity: 0, x: 24 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.7, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                className="lg:col-span-4 w-full max-w-sm lg:max-w-none ml-auto lg:ml-0"
-              >
-                <div className="rounded-[28px] p-[1px] bg-gradient-to-br from-white/30 via-white/10 to-transparent">
-                  <div className="rounded-[27px] bg-white/10 backdrop-blur-2xl border border-white/15 p-6 sm:p-7 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)]">
-                    <div className="flex items-center justify-between mb-5">
-                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/60">Overall Rating</p>
-                      <span className="text-[11px] font-semibold text-emeraldAccent-300 bg-emeraldAccent-500/15 border border-emeraldAccent-400/25 px-2.5 py-1 rounded-full">
-                        Excellent
-                      </span>
-                    </div>
-                    <div className="flex items-end gap-4 mb-5">
-                      <div>
-                        <p className="text-6xl font-bold tracking-tight text-white leading-none">{uni.rating.toFixed(1)}</p>
-                        <p className="text-xs text-white/50 mt-1.5">out of 5.0</p>
-                      </div>
-                      <div className="flex-1 pb-2">
-                        <div className="flex gap-0.5">
-                          {[1, 2, 3, 4, 5].map((i) => (
-                            <Star
-                              key={i}
-                              size={20}
-                              className={i <= Math.round(uni.rating) ? 'fill-warningSaaS-400 text-warningSaaS-400' : 'fill-white/10 text-white/10'}
-                            />
-                          ))}
-                        </div>
-                        <p className="text-xs text-white/60 mt-2">{uni.reviewCount.toLocaleString()} verified reviews</p>
-                      </div>
-                    </div>
-                    <div className="space-y-2.5">
-                      {ratingLabels.slice(0, 4).map(({ key, label }) => (
-                        <div key={key} className="flex items-center gap-3">
-                          <span className="text-xs text-white/70 w-24 shrink-0 font-medium">{label}</span>
-                          <div className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${(avgRatings[key] / 5) * 100}%` }}
-                              transition={{ duration: 1.2, delay: 0.5, ease: 'easeOut' }}
-                              className="h-full rounded-full bg-gradient-to-r from-emeraldAccent-400 to-primary-400"
-                            />
-                          </div>
-                          <span className="text-xs font-semibold text-white/90 w-7 text-right">{avgRatings[key].toFixed(1)}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
-
-          {/* Stats Strip */}
-          <div className="container-page pb-8 sm:pb-10">
-            <motion.div
-              variants={stagger}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, margin: '-50px' }}
-              className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
-            >
-              <StatCard value={uni.established} label="Year Established" icon={Landmark} color="primary" suffix="" />
-              <StatCard value={uni.programCount} label="Total Programs" icon={GraduationCap} color="blue" />
-              <StatCard value={Math.round(uni.reviewCount * 3.8)} label="Total Students" icon={Users} color="emerald" />
-              <StatCard value={Math.round(uni.programCount * 18)} label="Faculty Members" icon={School} color="amber" />
             </motion.div>
           </div>
         </div>
@@ -499,55 +408,10 @@ export default function UniversityProfilePage() {
                         Discover the history, mission, and values that shape one of Bangladesh's leading private institutions.
                       </p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-                      <div className="md:col-span-3 card p-8 sm:p-10">
-                        <p className="text-ink-600 leading-[1.9] text-base">
-                          {uni.description}
-                        </p>
-                        <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-4">
-                          <div className="p-4 rounded-2xl bg-ink-50 border border-ink-100">
-                            <p className="text-[11px] font-bold uppercase tracking-wider text-ink-400">Founded</p>
-                            <p className="mt-1 text-xl font-bold text-ink-900">{uni.established}</p>
-                          </div>
-                          <div className="p-4 rounded-2xl bg-primary-50 border border-primary-100">
-                            <p className="text-[11px] font-bold uppercase tracking-wider text-primary-500">Programs</p>
-                            <p className="mt-1 text-xl font-bold text-primary-700">{uni.programCount}</p>
-                          </div>
-                          <div className="p-4 rounded-2xl bg-blueSaaS-50 border border-blueSaaS-100">
-                            <p className="text-[11px] font-bold uppercase tracking-wider text-blueSaaS-500">Min GPA</p>
-                            <p className="mt-1 text-xl font-bold text-blueSaaS-700">{uni.minGPA.toFixed(1)}</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="md:col-span-2 space-y-4">
-                        <div className="card p-6 bg-gradient-to-br from-primary-500 via-primary-500 to-primary-700 text-white border-primary-500 overflow-hidden relative">
-                          <div className="absolute top-0 right-0 w-40 h-40 bg-emeraldAccent-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-                          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/3" />
-                          <Trophy size={28} className="text-warningSaaS-300 mb-4" strokeWidth={2} />
-                          <p className="text-sm font-semibold text-white/80">Accreditation</p>
-                          <p className="mt-2 text-xl font-bold leading-tight">{uni.accreditation}</p>
-                          <div className="mt-6 pt-6 border-t border-white/15">
-                            <p className="text-xs font-bold uppercase tracking-wider text-white/70 mb-2">Source Verified</p>
-                            <div className="flex items-center gap-2 text-sm text-white/90">
-                              <Shield size={15} /> Official University Website
-                            </div>
-                          </div>
-                        </div>
-                        <div className="card p-6">
-                          <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-ink-400 mb-3">Popular Programs</p>
-                          <div className="space-y-2.5">
-                            {uni.popularPrograms.map((p) => (
-                              <div key={p} className="flex items-center gap-3 p-3 rounded-xl hover:bg-ink-50 transition-colors cursor-pointer group">
-                                <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary-100 to-emeraldAccent-100 text-primary-600 flex items-center justify-center font-bold text-sm group-hover:scale-105 transition-transform">
-                                  {p.charAt(0)}
-                                </div>
-                                <p className="flex-1 font-semibold text-ink-800">{p}</p>
-                                <ArrowRight size={15} className="text-ink-300 group-hover:text-primary-500 group-hover:translate-x-0.5 transition-all" />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
+                    <div className="card p-8 sm:p-10">
+                      <p className="text-ink-600 leading-[1.9] text-base">
+                        {uni.description}
+                      </p>
                     </div>
                   </motion.section>
 
@@ -657,94 +521,6 @@ export default function UniversityProfilePage() {
                     </div>
                   </motion.section>
 
-                  {/* Statistics Dashboard */}
-                  <motion.section variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}>
-                    <div className="section-header">
-                      <span className="section-eyebrow"><Gauge size={14} /> University Insights</span>
-                      <h2 className="section-title text-3xl sm:text-4xl">Statistics at a Glance</h2>
-                      <p className="section-sub max-w-2xl text-lg mt-3">
-                        Key metrics and performance indicators across academics, research, and student outcomes.
-                      </p>
-                    </div>
-
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                      <StatCard value={94} suffix="%" label="Admission Rate" icon={Target} color="primary" />
-                      <StatCard value={89} suffix="%" label="Graduation Rate" icon={CapIcon} color="emerald" />
-                      <StatCard value={92} suffix="%" label="Placement Rate" icon={Briefcase} color="blue" />
-                      <StatCard value={48} suffix="+" label="Research Labs" icon={Microscope} color="amber" />
-                    </div>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                      <div className="card p-6 lg:col-span-2">
-                        <div className="flex items-center justify-between mb-6">
-                          <div>
-                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-ink-400 mb-1">Cost Distribution</p>
-                            <h3 className="text-lg font-bold text-ink-900">Tuition Comparison by Program (k BDT)</h3>
-                          </div>
-                          <div className="p-2 rounded-xl bg-primary-50 text-primary-600">
-                            <BarChart3 size={18} />
-                          </div>
-                        </div>
-                        <div className="h-64 sm:h-72">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={tuitionChartData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
-                              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
-                              <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#64748B' }} axisLine={false} tickLine={false} dy={8} />
-                              <YAxis tick={{ fontSize: 12, fill: '#64748B' }} axisLine={false} tickLine={false} />
-                              <Tooltip
-                                contentStyle={{ borderRadius: 16, border: '1px solid #E5E7EB', boxShadow: '0 20px 40px -12px rgba(15,23,42,0.15)', padding: 12 }}
-                                cursor={{ fill: 'rgba(15, 118, 110, 0.05)' }}
-                              />
-                              <Bar dataKey="Tuition" fill="#0F766E" radius={[6, 6, 0, 0]} />
-                              <Bar dataKey="Admission" fill="#10B981" radius={[6, 6, 0, 0]} />
-                            </BarChart>
-                          </ResponsiveContainer>
-                        </div>
-                      </div>
-                      <div className="card p-6">
-                        <div className="flex items-center justify-between mb-6">
-                          <div>
-                            <p className="text-xs font-bold uppercase tracking-[0.14em] text-ink-400 mb-1">Breakdown</p>
-                            <h3 className="text-lg font-bold text-ink-900">Total Cost Allocation</h3>
-                          </div>
-                          <div className="p-2 rounded-xl bg-emeraldAccent-50 text-emeraldAccent-600">
-                            <PieChart size={18} />
-                          </div>
-                        </div>
-                        <div className="h-52 sm:h-56">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <RePieChart>
-                              <Pie
-                                data={pieData}
-                                cx="50%"
-                                cy="50%"
-                                innerRadius={52}
-                                outerRadius={80}
-                                paddingAngle={4}
-                                dataKey="value"
-                              >
-                                {pieData.map((entry, index) => (
-                                  <Cell key={`cell-${index}`} fill={entry.color} />
-                                ))}
-                              </Pie>
-                              <Tooltip
-                                contentStyle={{ borderRadius: 12, border: '1px solid #E5E7EB', padding: 10, fontSize: 12 }}
-                              />
-                            </RePieChart>
-                          </ResponsiveContainer>
-                        </div>
-                        <div className="mt-2 space-y-2">
-                          {pieData.map((d) => (
-                            <div key={d.name} className="flex items-center gap-3 text-sm">
-                              <div className="h-2.5 w-2.5 rounded-full" style={{ background: d.color }} />
-                              <span className="text-ink-600 flex-1 font-medium">{d.name}</span>
-                              <span className="font-bold text-ink-900">{d.value}%</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </motion.section>
                 </motion.div>
               )}
 
@@ -1887,52 +1663,6 @@ export default function UniversityProfilePage() {
                     </div>
                   </motion.section>
 
-                  {/* Research */}
-                  <motion.section variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}>
-                    <div className="section-header">
-                      <span className="section-eyebrow"><Microscope size={14} /> Research &amp; Innovation</span>
-                      <h2 className="section-title text-3xl sm:text-4xl">Research Achievements</h2>
-                      <p className="section-sub max-w-2xl text-lg mt-3">
-                        Advancing knowledge through impactful research and industry partnerships.
-                      </p>
-                    </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                      <StatCard value={250} suffix="+" label="Publications" icon={Microscope} color="primary" />
-                      <StatCard value={35} suffix="+" label="Research Grants" icon={Award} color="emerald" />
-                      <StatCard value={18} suffix="+" label="Industry Partners" icon={Network} color="blue" />
-                      <StatCard value={12} suffix="+" label="Patents Filed" icon={Shield} color="amber" />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {[
-                        { title: 'AI & Machine Learning Lab', count: '40+ Papers', tag: 'Research Center', icon: Binary, c: 'primary' },
-                        { title: 'Renewable Energy Research', count: '12M BDT Grant', tag: 'Ongoing Project', icon: Zap, c: 'emerald' },
-                        { title: 'Industry PhD Program', count: '15 Cohorts', tag: 'Collaboration', icon: UserCog, c: 'blue' },
-                      ].map((r, i) => {
-                        const colorMap: Record<string, string> = {
-                          primary: 'from-primary-500 to-primary-700',
-                          emerald: 'from-emeraldAccent-500 to-emeraldAccent-700',
-                          blue: 'from-blueSaaS-500 to-blueSaaS-700',
-                        };
-                        return (
-                          <motion.div
-                            key={r.title}
-                            variants={fadeUp}
-                            custom={i}
-                            className="card p-6 sm:p-7 relative overflow-hidden group hover:shadow-card-hover transition-all"
-                          >
-                            <div className={`absolute -top-10 -right-10 w-40 h-40 rounded-full bg-gradient-to-br ${colorMap[r.c]} opacity-10 group-hover:opacity-20 transition-opacity`} />
-                            <div className={`relative h-12 w-12 rounded-2xl bg-gradient-to-br ${colorMap[r.c]} text-white flex items-center justify-center mb-5 shadow-md`}>
-                              <r.icon size={22} strokeWidth={2.1} />
-                            </div>
-                            <span className="chip-muted mb-3">{r.tag}</span>
-                            <h4 className="text-lg font-bold text-ink-900 leading-snug">{r.title}</h4>
-                            <p className="mt-2 text-xl font-black text-primary-700">{r.count}</p>
-                          </motion.div>
-                        );
-                      })}
-                    </div>
-                  </motion.section>
-
                   {/* FAQ */}
                   <motion.section variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}>
                     <div className="section-header">
@@ -2054,74 +1784,6 @@ export default function UniversityProfilePage() {
                   </div>
                 </div>
 
-                {/* Rankings Card */}
-                <div className="card p-6">
-                  <div className="flex items-center justify-between mb-5">
-                    <h3 className="text-base font-bold text-ink-900 flex items-center gap-2">
-                      <Trophy size={18} className="text-warningSaaS-500" /> Rankings &amp; Rating
-                    </h3>
-                  </div>
-                  <div className="space-y-4">
-                    {[
-                      { label: 'Overall Rating', value: uni.rating.toFixed(1) + ' / 5.0', bar: (uni.rating / 5) * 100, color: 'bg-warningSaaS-500' },
-                      { label: 'National Ranking', value: '#' + (universities.findIndex(u => u.id === uni.id) + 1) + ' of ' + universities.length, bar: ((universities.length - universities.findIndex(u => u.id === uni.id)) / universities.length) * 100, color: 'bg-primary-500' },
-                      { label: 'Global Ranking (QS)', value: 'Regional Top', bar: 58, color: 'bg-blueSaaS-500' },
-                    ].map((r) => (
-                      <div key={r.label}>
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-xs font-semibold text-ink-500">{r.label}</span>
-                          <span className="text-xs font-bold text-ink-900">{r.value}</span>
-                        </div>
-                        <div className="h-2 rounded-full bg-ink-100 overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            whileInView={{ width: `${r.bar}%` }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1, ease: 'easeOut' }}
-                            className={`h-full rounded-full ${r.color}`}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-5 pt-5 border-t border-borderLine space-y-3">
-                    <div className="flex items-start gap-3">
-                      <Shield size={16} className="text-primary-600 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-xs font-bold uppercase tracking-wider text-ink-400">Accreditation</p>
-                        <p className="font-semibold text-sm text-ink-900">{uni.accreditation}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <Flag size={16} className="text-emeraldAccent-600 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-xs font-bold uppercase tracking-wider text-ink-400">Admission Status</p>
-                        <p className="font-semibold text-sm flex items-center gap-1.5">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-emeraldAccent-50 text-emeraldAccent-700 border border-emeraldAccent-100">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emeraldAccent-500 animate-pulse" />
-                            Open
-                          </span>
-                          <span className="text-ink-500 font-medium">Spring 2026</span>
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <Sparkles size={16} className="text-warningSaaS-600 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-xs font-bold uppercase tracking-wider text-ink-400">Scholarships</p>
-                        <p className="font-semibold text-sm text-ink-900">
-                          {uniScholarships.length} available
-                          {uni.scholarshipAvailable && (
-                            <span className="ml-1.5 inline-block px-1.5 py-0.5 text-[10px] font-bold bg-warningSaaS-50 text-warningSaaS-700 rounded-md border border-warningSaaS-100">
-                              Merit + Need
-                            </span>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
                 {/* Deadline Card */}
                 {uniNotices.length > 0 && (() => {
                   const nextDeadline = uniNotices[0];
@@ -2214,21 +1876,6 @@ export default function UniversityProfilePage() {
 
                 {/* Brochure & Contact */}
                 <div className="space-y-4">
-                  <div className="card p-5 bg-gradient-to-br from-blueSaaS-600 to-primary-700 text-white border-0 overflow-hidden relative">
-                    <div className="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
-                    <div className="absolute -right-4 -bottom-8 w-24 h-24 bg-emeraldAccent-400/20 rounded-full blur-xl" />
-                    <div className="relative">
-                      <div className="w-10 h-10 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center mb-3">
-                        <FileText size={20} />
-                      </div>
-                      <h3 className="font-bold text-lg leading-tight mb-1">Download Brochure</h3>
-                      <p className="text-xs text-white/80 mb-4 font-medium">Get complete program info, fees, and campus details.</p>
-                      <button className="w-full bg-white text-primary-700 hover:bg-white/95 rounded-2xl px-4 py-2.5 text-sm font-bold flex items-center justify-center gap-2 transition-all duration-200 hover:-translate-y-0.5 shadow-lg">
-                        <Download size={15} /> PDF · 4.2 MB
-                      </button>
-                    </div>
-                  </div>
-
                   <div className="card p-5">
                     <div className="flex items-center gap-2 mb-4 px-1">
                       <Phone size={16} className="text-primary-600" />
