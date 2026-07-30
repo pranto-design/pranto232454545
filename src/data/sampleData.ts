@@ -173,35 +173,36 @@ const makeOffering = (
   id: string, programId: string, universityId: string, degree: any,
   durationYears: number, totalCredits: number, tuitionPerCredit: number,
   admissionFee: number, labFee: number, otherFees: number, semesterFee: number,
-  requirements: string[], scholarshipAvailable: boolean,
+  requirements: string[], scholarshipAvailable: boolean, facilities: string[],
 ): ProgramOffering => ({
   id, programId, universityId, degree, durationYears, totalCredits, tuitionPerCredit,
   admissionFee, labFee, otherFees, semesterFee, admissionRequirements: requirements,
   scholarshipAvailable,
   totalTuitionEstimate: totalCredits * tuitionPerCredit + admissionFee,
+  facilities,
 });
 
 export const programOfferings: ProgramOffering[] = [
   // BRACU
-  makeOffering('o1', 'p1', 'u1', 'BSc', 4, 160, 5500, 25000, 4000, 3000, 5000, ['HSC GPA 4.0+', 'Physics, Math', 'Admission test'], true),
-  makeOffering('o13', 'p2', 'u1', 'BBA', 4, 120, 5000, 25000, 0, 3000, 5000, ['HSC GPA 4.0+', 'Any group', 'Admission test'], true),
+  makeOffering('o1', 'p1', 'u1', 'BSc', 4, 160, 5500, 25000, 4000, 3000, 5000, ['HSC GPA 4.0+', 'Physics, Math', 'Admission test'], true, ['Library', 'Computer Labs (AI/ML)', 'Project Lab', 'Research Center', 'Wi-Fi Campus']),
+  makeOffering('o13', 'p2', 'u1', 'BBA', 4, 120, 5000, 25000, 0, 3000, 5000, ['HSC GPA 4.0+', 'Any group', 'Admission test'], true, ['Library', 'Business Case Lab', 'Career Services', 'Wi-Fi Campus', 'Auditorium']),
   
   // AIUB
-  makeOffering('o4', 'p1', 'u4', 'BSc', 4, 148, 8500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true),
-  makeOffering('o14', 'p2', 'u4', 'BBA', 4, 140, 8000, 25000, 0, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Any group', 'Admission test'], true),
-  makeOffering('o15', 'p3', 'u4', 'BSc', 4, 148, 7500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true),
-  makeOffering('o16', 'p6', 'u4', 'BArch', 5, 190, 6500, 25000, 2000, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true),
-  makeOffering('o17', 'p7', 'u4', 'BA', 4, 120, 6500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Any group', 'Admission test'], true),
-  makeOffering('o18', 'p8', 'u4', 'LLB', 4, 140, 8500, 25000, 0, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Any group', 'Admission test'], true),
+  makeOffering('o4', 'p1', 'u4', 'BSc', 4, 148, 8500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true, ['Library', 'Advanced AI Lab', 'Data Science Lab', 'IoT Lab', 'Cyber Security Lab', 'Wi-Fi', 'Project Complex', 'Industry Partner Center']),
+  makeOffering('o14', 'p2', 'u4', 'BBA', 4, 140, 8000, 25000, 0, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Any group', 'Admission test'], true, ['Library', 'Finance Lab', 'Marketing Simulation Lab', 'Career Services', 'Wi-Fi', 'Auditorium', 'Incubation Center']),
+  makeOffering('o15', 'p3', 'u4', 'BSc', 4, 148, 7500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true, ['Library', 'Power Electronics Lab', 'Telecom Lab', 'VLSI Lab', 'Wi-Fi', 'Project Workspace']),
+  makeOffering('o16', 'p6', 'u4', 'BArch', 5, 190, 6500, 25000, 2000, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true, ['Library', 'Design Studios', '3D Printing Lab', 'Materials Lab', 'Wi-Fi', 'Exhibition Gallery']),
+  makeOffering('o17', 'p7', 'u4', 'BA', 4, 120, 6500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Any group', 'Admission test'], true, ['Library', 'Language Lab', 'Media Studio', 'Wi-Fi', 'Auditorium']),
+  makeOffering('o18', 'p8', 'u4', 'LLB', 4, 140, 8500, 25000, 0, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Any group', 'Admission test'], true, ['Library', 'Moot Court', 'Wi-Fi', 'Auditorium', 'Legal Clinic']),
   // AIUB Additional Offerings
-  makeOffering('o19', 'p9', 'u4', 'BA', 4, 130, 5000, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Any group', 'Admission test'], true), // JMC
-  makeOffering('o20', 'p10', 'u4', 'BSS', 4, 130, 5500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Any group', 'Admission test'], true), // Economics
-  makeOffering('o21', 'p11', 'u4', 'BSc', 4, 148, 6500, 25000, 2000, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true), // IPE
-  makeOffering('o22', 'p12', 'u4', 'BSc', 4, 148, 6000, 25000, 2000, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true), // COE
-  makeOffering('o23', 'p4', 'u4', 'BPharm', 4, 160, 8500, 25000, 3000, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Biology & Chemistry', 'Admission test'], true), // Pharmacy
-  makeOffering('o24', 'p13', 'u4', 'BSc', 4, 140, 7000, 25000, 3000, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Biology & Chemistry', 'Admission test'], true), // BMB
-  makeOffering('o25', 'p14', 'u4', 'BSc', 4, 148, 8500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true), // DS
-  makeOffering('o26', 'p15', 'u4', 'BSc', 4, 148, 8500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true), // CNCS
+  makeOffering('o19', 'p9', 'u4', 'BA', 4, 130, 5000, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Any group', 'Admission test'], true, ['Library', 'Media Studio', 'Editing Suite', 'Wi-Fi', 'Press Club']), // JMC
+  makeOffering('o20', 'p10', 'u4', 'BSS', 4, 130, 5500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Any group', 'Admission test'], true, ['Library', 'Econometrics Lab', 'Wi-Fi', 'Research Center']), // Economics
+  makeOffering('o21', 'p11', 'u4', 'BSc', 4, 148, 6500, 25000, 2000, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true, ['Library', 'Production Lab', 'Quality Control Lab', 'Wi-Fi', 'Simulation Lab']), // IPE
+  makeOffering('o22', 'p12', 'u4', 'BSc', 4, 148, 6000, 25000, 2000, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true, ['Library', 'Digital Systems Lab', 'Embedded Systems Lab', 'Wi-Fi', 'Hardware Lab']), // COE
+  makeOffering('o23', 'p4', 'u4', 'BPharm', 4, 160, 8500, 25000, 3000, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Biology & Chemistry', 'Admission test'], true, ['Library', 'Pharmaceutical Lab', 'Microbiology Lab', 'Organic Chemistry Lab', 'Wi-Fi', 'Pilot Plant']), // Pharmacy
+  makeOffering('o24', 'p13', 'u4', 'BSc', 4, 140, 7000, 25000, 3000, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Biology & Chemistry', 'Admission test'], true, ['Library', 'Molecular Biology Lab', 'Biochemistry Lab', 'Wi-Fi', 'Research Facility']), // BMB
+  makeOffering('o25', 'p14', 'u4', 'BSc', 4, 148, 8500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true, ['Library', 'Data Science Lab', 'GPU Cluster', 'Big Data Lab', 'Wi-Fi', 'Industry AI Center']), // DS
+  makeOffering('o26', 'p15', 'u4', 'BSc', 4, 148, 8500, 25000, 2500, 2000, 12500, ['SSC & HSC GPA 3.5+', 'Total GPA 8.0+', 'Math & Physics', 'Admission test'], true, ['Library', 'Network Security Lab', 'Ethical Hacking Lab', 'SOC Lab', 'Wi-Fi', 'Red/Blue Team Range']), // CNCS
 ];
 
 // ============================================================
@@ -264,6 +265,13 @@ export const getOfferingsByUniversity = (universityId: string) =>
   programOfferings.filter((o) => o.universityId === universityId);
 export const getOfferingsByProgram = (programId: string) =>
   programOfferings.filter((o) => o.programId === programId);
+export const getOfferingById = (id: string) =>
+  programOfferings.find((o) => o.id === id);
+export const getSimilarOfferings = (offeringId: string) => {
+  const base = programOfferings.find((o) => o.id === offeringId);
+  if (!base) return [];
+  return programOfferings.filter((o) => o.programId === base.programId && o.id !== offeringId);
+};
 export const getReviewsByUniversity = (universityId: string) =>
   reviews.filter((r) => r.universityId === universityId);
 export const getScholarshipsByUniversity = (universityId: string) =>

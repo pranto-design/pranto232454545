@@ -49,13 +49,13 @@ export function VerificationBadge({ status, size = 'sm' }: { status: Verificatio
   );
 }
 
-export function CompareButton({ universityId }: { universityId: string }) {
-  const { isSelected, toggle, count } = useCompare();
-  const selected = isSelected(universityId);
+export function CompareButton({ offeringId }: { offeringId: string }) {
+  const { isOfferingSelected, toggleOffering, count } = useCompare();
+  const selected = isOfferingSelected(offeringId);
   const disabled = !selected && count >= 4;
   return (
     <button
-      onClick={() => toggle(universityId)}
+      onClick={() => toggleOffering(offeringId)}
       disabled={disabled}
       className={`btn text-xs px-3 py-2 ${
         selected
@@ -146,7 +146,9 @@ export function UniversityCard({ uni }: { uni: University }) {
         <Link to={`/universities/${uni.slug}`} className="btn-primary flex-1 text-xs">
           View University
         </Link>
-        <CompareButton universityId={uni.id} />
+        <Link to={`/universities/${uni.slug}`} className="btn-secondary !px-3 !py-2 text-xs">
+          View Programs
+        </Link>
       </div>
     </div>
   );

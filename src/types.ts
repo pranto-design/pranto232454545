@@ -47,6 +47,7 @@ export interface ProgramOffering {
   admissionRequirements: string[];
   scholarshipAvailable: boolean;
   totalTuitionEstimate: number; // precomputed: credits * perCredit + admissionFee
+  facilities: string[];        // program-level facilities (labs, etc.)
 }
 
 export interface Scholarship {

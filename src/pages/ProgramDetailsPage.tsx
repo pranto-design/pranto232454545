@@ -135,7 +135,7 @@ export default function ProgramDetailsPage() {
                         </td>
                         <td className="py-3 px-3">{o.durationYears} yrs</td>
                         <td className="py-3 px-3">{o.scholarshipAvailable ? <span className="chip-success text-[10px]">Yes</span> : <span className="chip-muted text-[10px]">No</span>}</td>
-                        <td className="py-3 pl-3"><CompareButton universityId={uni.id} /></td>
+                        <td className="py-3 pl-3"><CompareButton offeringId={o.id} /></td>
                       </tr>
                     );
                   })}

@@ -13,7 +13,7 @@ import {
   ThumbsUp, Flag, Star, ChevronRight, ChevronDown, Search, Filter,
   SlidersHorizontal, Clock, Coins, School, Landmark,
   TrendingUp, Trophy, Shield, Target, Zap, Sparkles,
-  Share2, Download, BarChart3, PieChart, Camera, User,
+  Download, BarChart3, PieChart, Camera, User,
   Briefcase, Microscope, HelpCircle, ArrowRight, Leaf, Wifi, Cpu,
   Utensils, Activity, BookMarked, GraduationCap as CapIcon,
   Map, Send, Bookmark, GitCompare, PlayCircle, Quote, CircleDollarSign,
@@ -233,12 +233,8 @@ export default function UniversityProfilePage() {
 
   return (
     <div className="min-h-screen">
-      {/* ================================================================ */}
-      {/* PREMIUM HERO SECTION (COMPACT — MOBILE-OPTIMIZED) */}
-      {/* ================================================================ */}
       <section className="relative overflow-hidden">
-        {/* Cover Image Layer — smaller on tiny screens */}
-        <div className="absolute inset-0 h-[300px] sm:h-[380px] lg:h-[420px]">
+        <div className="absolute inset-0 h-[200px] sm:h-[260px] lg:h-[300px]">
           <img
             src={`https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${encodeURIComponent(`modern university campus building with glass facade, green courtyard, students walking, professional photography, golden hour lighting, wide angle, hyperrealistic`)}&image_size=landscape_16_9`}
             alt={`${uni.name} campus`}
@@ -246,126 +242,56 @@ export default function UniversityProfilePage() {
             onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
           />
           <div className="absolute inset-0 hero-gradient" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(16,185,129,0.15),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(37,99,235,0.1),transparent_55%)]" />
         </div>
 
         <div className="relative">
-          {/* Breadcrumb — tighter on mobile */}
-          <div className="container-page pt-4 sm:pt-5 lg:pt-6">
-            <nav aria-label="Breadcrumb" className="text-[11px] sm:text-sm text-white/60 flex items-center gap-1.5 sm:gap-2 flex-wrap">
-              <Link to="/" className="hover:text-white transition-colors">Home</Link>
-              <ChevronRight size={12} className="opacity-50 shrink-0" />
-              <Link to="/universities" className="hover:text-white transition-colors">Universities</Link>
-              <ChevronRight size={12} className="opacity-50 shrink-0" />
-              <span className="text-white truncate">{uni.shortName}</span>
-            </nav>
-          </div>
-
-          {/* Hero Content — compact, mobile-first */}
-          <div className="container-page pt-5 sm:pt-6 lg:pt-7 pb-7 sm:pb-8 lg:pb-10">
+          <div className="container-page pt-4 sm:pt-6 pb-5 sm:pb-7">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-8 items-start"
             >
-              {/* Logo + Info */}
-              <div className="lg:col-span-8">
-                <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
-                  <div className="relative shrink-0">
-                    <motion.div
-                      initial={{ scale: 0.85, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 0.1, type: 'spring', stiffness: 200 }}
-                      className={`h-16 w-16 sm:h-20 sm:w-20 lg:h-22 lg:w-22 rounded-2xl sm:rounded-[24px] bg-gradient-to-br ${uni.logoColor} text-white flex items-center justify-center font-bold text-xl sm:text-2xl lg:text-3xl font-display shadow-[0_20px_50px_-12px_rgba(0,0,0,0.4)] ring-4 ring-white/10`}
-                    >
-                      {uni.logoInitials}
-                    </motion.div>
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.4, delay: 0.35, type: 'spring' }}
-                      className="absolute -bottom-1.5 sm:-bottom-2 -right-1.5 sm:-right-2 h-6 w-6 sm:h-8 sm:w-8 rounded-lg sm:rounded-xl bg-emeraldAccent-500 text-white flex items-center justify-center shadow-lg ring-4 ring-white/20"
-                    >
-                      <Shield size={12} strokeWidth={2.5} />
-                    </motion.div>
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-                      <VerificationBadge status={uni.verification} />
-                      {uni.featured && (
-                        <span className="chip bg-warningSaaS-500/15 text-warningSaaS-300 border border-warningSaaS-400/30 text-[10px] sm:text-xs">
-                          <Sparkles size={11} /> Featured
-                        </span>
-                      )}
-                      <span className="chip bg-white/10 text-white/80 border border-white/15 text-[10px] sm:text-xs">
-                        <Award size={11} /> #{universities.findIndex(u => u.id === uni.id) + 1} in BD
-                      </span>
-                    </div>
-                    <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold tracking-tight text-white leading-[1.15] sm:leading-[1.1]">
-                      {uni.name}
-                    </h1>
-                    <p className="mt-1.5 sm:mt-2 text-sm sm:text-base lg:text-lg text-white/70 font-medium">
-                      {uni.shortName} • Est. {uni.established} • {uni.accreditation.split('.')[0]}
-                    </p>
-
-                    {/* Info badges — compact, grid-like on tiny screens */}
-                    <div className="mt-3 sm:mt-4 grid grid-cols-2 gap-x-3 gap-y-2 text-[11px] sm:text-sm text-white/75">
-                      <span className="flex items-center gap-2 min-w-0">
-                        <span className="flex items-center justify-center h-6 w-6 sm:h-7 sm:w-7 rounded-md sm:rounded-lg bg-white/10 border border-white/10 shrink-0">
-                          <MapPin size={11} strokeWidth={2.2} />
-                        </span>
-                        <span className="truncate">{uni.location}</span>
-                      </span>
-                      <span className="flex items-center gap-2 min-w-0">
-                        <span className="flex items-center justify-center h-6 w-6 sm:h-7 sm:w-7 rounded-md sm:rounded-lg bg-white/10 border border-white/10 shrink-0">
-                          <Landmark size={11} strokeWidth={2.2} />
-                        </span>
-                        <span>{uni.established} Yrs</span>
-                      </span>
-                      <span className="flex items-center gap-2 min-w-0">
-                        <span className="flex items-center justify-center h-6 w-6 sm:h-7 sm:w-7 rounded-md sm:rounded-lg bg-white/10 border border-white/10 shrink-0">
-                          <GraduationCap size={11} strokeWidth={2.2} />
-                        </span>
-                        <span>{uni.programCount} Programs</span>
-                      </span>
-                      <span className="flex items-center gap-2 min-w-0">
-                        <span className="flex items-center justify-center h-6 w-6 sm:h-7 sm:w-7 rounded-md sm:rounded-lg bg-white/10 border border-white/10 shrink-0">
-                          <Users size={11} strokeWidth={2.2} />
-                        </span>
-                        <span>{(uni.reviewCount >= 1000 ? (uni.reviewCount/1000).toFixed(1)+'K' : uni.reviewCount)}+</span>
-                      </span>
-                    </div>
-                  </div>
+              <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+                <div className="relative shrink-0">
+                  <motion.div
+                    initial={{ scale: 0.85, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.1, type: 'spring', stiffness: 200 }}
+                    className={`h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 rounded-2xl bg-gradient-to-br ${uni.logoColor} text-white flex items-center justify-center font-bold text-lg sm:text-xl lg:text-2xl font-display shadow-[0_20px_50px_-12px_rgba(0,0,0,0.4)] ring-4 ring-white/10`}
+                  >
+                    {uni.logoInitials}
+                  </motion.div>
                 </div>
 
-                {/* Action Buttons — responsive: column on tiny, row on sm+ */}
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  className="mt-5 sm:mt-6 grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-2.5"
-                >
-                  <button className="btn-primary text-[12px] sm:text-sm px-3 sm:px-6 py-2.5 sm:py-3 col-span-2 sm:col-span-1">
-                    <Send size={14} strokeWidth={2.2} /> Apply Now
-                  </button>
-                  <a
-                    href={uni.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-secondary text-[12px] sm:text-sm px-3 sm:px-6 py-2.5 sm:py-3 !bg-white/10 !text-white !border-white/20 hover:!bg-white/15 col-span-2 sm:col-span-1"
-                  >
-                    <Globe size={14} /> Website <ExternalLink size={11} />
-                  </a>
-                  <SaveButton universityId={uni.id} />
-                  <CompareButton universityId={uni.id} />
-                  <button className="btn-secondary !px-3 !py-2.5 col-span-2 sm:col-span-1 sm:!w-auto" aria-label="Share">
-                    <Share2 size={16} />
-                    <span className="sm:hidden ml-2 text-xs">Share</span>
-                  </button>
-                </motion.div>
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-lg sm:text-xl lg:text-3xl font-bold tracking-tight text-white leading-[1.15] sm:leading-[1.1]">
+                    {uni.name}
+                  </h1>
+                  <p className="mt-1 text-xs sm:text-sm lg:text-base text-white/70 font-medium truncate">
+                    {uni.shortName} • Est. {uni.established} • {uni.location} • {uni.programCount} Programs
+                  </p>
+                </div>
               </div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="mt-4 sm:mt-5 grid grid-cols-2 sm:flex sm:flex-wrap gap-2"
+              >
+                <button className="btn-primary text-[11px] sm:text-sm px-3 sm:px-5 py-2 sm:py-2.5 col-span-2 sm:col-span-1">
+                  <Send size={13} strokeWidth={2.2} /> Apply Now
+                </button>
+                <a
+                  href={uni.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary text-[11px] sm:text-sm px-3 sm:px-5 py-2 sm:py-2.5 !bg-white/10 !text-white !border-white/20 hover:!bg-white/15 col-span-2 sm:col-span-1"
+                >
+                  <Globe size={13} /> Website
+                </a>
+                <SaveButton universityId={uni.id} />
+              </motion.div>
             </motion.div>
           </div>
         </div>
@@ -424,22 +350,6 @@ export default function UniversityProfilePage() {
                   transition={{ duration: 0.4, ease: 'easeOut' }}
                   className="space-y-12 sm:space-y-14 lg:space-y-20"
                 >
-                  {/* About */}
-                  <motion.section variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}>
-                    <div className="section-header mb-6 md:mb-10">
-                      <span className="section-eyebrow"><Leaf size={14} /> About</span>
-                      <h2 className="section-title text-2xl sm:text-3xl lg:text-4xl">About {uni.shortName}</h2>
-                      <p className="section-sub max-w-2xl text-sm sm:text-base lg:text-lg mt-2 sm:mt-3 leading-relaxed">
-                        Discover the history, mission, and values of one of Bangladesh's leading private institutions.
-                      </p>
-                    </div>
-                    <div className="card p-5 sm:p-8 lg:p-10">
-                      <p className="text-ink-600 leading-[1.8] sm:leading-[1.9] text-sm sm:text-base">
-                        {uni.description}
-                      </p>
-                    </div>
-                  </motion.section>
-
                   {/* Faculties & Departments */}
                   <motion.section variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}>
                     <div className="section-header">
@@ -893,7 +803,8 @@ export default function UniversityProfilePage() {
                             <th className="text-right font-semibold px-4 py-4 whitespace-nowrap">Per Credit</th>
                             <th className="text-right font-semibold px-4 py-4 whitespace-nowrap">Admission</th>
                             <th className="text-right font-semibold px-4 py-4 whitespace-nowrap">Other/Sem</th>
-                            <th className="text-right font-semibold px-6 sm:px-8 py-4 whitespace-nowrap">Est. Total</th>
+                            <th className="text-right font-semibold px-4 py-4 whitespace-nowrap">Est. Total</th>
+                            <th className="text-right font-semibold px-6 sm:px-8 py-4 whitespace-nowrap">Compare</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -914,10 +825,13 @@ export default function UniversityProfilePage() {
                                 <td className="text-right px-4 py-4 text-ink-700">{formatBDTFull(o.tuitionPerCredit)}</td>
                                 <td className="text-right px-4 py-4 text-ink-700">{formatBDTFull(o.admissionFee)}</td>
                                 <td className="text-right px-4 py-4 text-ink-700">{formatBDTFull(o.labFee + o.otherFees + o.semesterFee)}</td>
-                                <td className="text-right px-6 sm:px-8 py-4">
+                                <td className="text-right px-4 py-4">
                                   <span className="inline-flex items-center justify-end px-3 py-1.5 rounded-xl bg-primary-50 text-primary-700 font-bold border border-primary-100">
                                     {formatBDT(o.totalTuitionEstimate)}
                                   </span>
+                                </td>
+                                <td className="text-right px-6 sm:px-8 py-4 whitespace-nowrap">
+                                  <CompareButton offeringId={o.id} />
                                 </td>
                               </tr>
                             );
@@ -1803,7 +1717,9 @@ export default function UniversityProfilePage() {
                       </button>
                       <div className="grid grid-cols-2 gap-3">
                         <SaveButton universityId={uni.id} />
-                        <CompareButton universityId={uni.id} />
+                        <button className="btn !bg-white !text-primary-700 hover:!bg-white/95 !py-3 text-sm">
+                          <Download size={16} /> Share
+                        </button>
                       </div>
                     </div>
                   </div>
