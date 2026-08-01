@@ -1,27 +1,16 @@
 import { useState, useMemo } from 'react';
-import { Search, SlidersHorizontal, X, MapPin, Award, GraduationCap } from 'lucide-react';
+import { Search, X, MapPin, Award, GraduationCap } from 'lucide-react';
 import { universities, programs, formatBDT } from '@/data/sampleData';
 import { UniversityCard, EmptyState } from '@/components/ui';
 import type { Division } from '@/types';
 
 const divisions: Division[] = ['Dhaka', 'Chattogram', 'Khulna', 'Rajshahi', 'Sylhet', 'Barishal', 'Rangpur', 'Mymensingh'];
 
-const sortOptions = [
-  { value: 'popular', label: 'Most Popular' },
-  { value: 'rating', label: 'Highest Rated' },
-  { value: 'tuition-low', label: 'Lowest Tuition' },
-  { value: 'tuition-high', label: 'Highest Tuition' },
-  { value: 'newest', label: 'Newest' },
-  { value: 'programs', label: 'Most Programs' },
-];
-
 export default function UniversitiesPage() {
   const [search, setSearch] = useState('');
   const [division, setDivision] = useState('');
   const [program, setProgram] = useState('');
   const [tuitionMax, setTuitionMax] = useState(0);
-  const [sort, setSort] = useState('popular');
-  const [showFilters, setShowFilters] = useState(false);
 
   const filtered = useMemo(() => {
     let list = [...universities];
@@ -37,20 +26,13 @@ export default function UniversitiesPage() {
     if (program) list = list.filter((u) => u.popularPrograms.includes(program));
     if (tuitionMax > 0) list = list.filter((u) => u.tuitionMin <= tuitionMax);
 
-    switch (sort) {
-      case 'rating': list.sort((a, b) => b.rating - a.rating); break;
-      case 'tuition-low': list.sort((a, b) => a.tuitionMin - b.tuitionMin); break;
-      case 'tuition-high': list.sort((a, b) => b.tuitionMax - a.tuitionMax); break;
-      case 'newest': list.sort((a, b) => b.established - a.established); break;
-      case 'programs': list.sort((a, b) => b.programCount - a.programCount); break;
-      default: list.sort((a, b) => b.reviewCount - a.reviewCount);
-    }
+    list.sort((a, b) => b.reviewCount - a.reviewCount); // Default popular sort
+
     return list;
-  }, [search, division, program, tuitionMax, sort]);
+  }, [search, division, program, tuitionMax]);
 
   const resetFilters = () => {
     setSearch(''); setDivision(''); setProgram(''); setTuitionMax(0);
-    setSort('popular');
   };
 
   const activeFilterCount = [division, program, tuitionMax > 0 ? 'x' : ''].filter(Boolean).length;
@@ -74,19 +56,10 @@ export default function UniversitiesPage() {
               className="input pl-10"
             />
           </div>
-          <select value={sort} onChange={(e) => setSort(e.target.value)} className="input lg:w-56">
-            {sortOptions.map((o) => <option key={o.value} value={o.value}>Sort: {o.label}</option>)}
-          </select>
-          <button
-            onClick={() => setShowFilters((v) => !v)}
-            className="btn-secondary lg:hidden"
-          >
-            <SlidersHorizontal size={16} /> Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
-          </button>
         </div>
 
-        {/* Desktop filters */}
-        <div className={`mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 ${showFilters ? '' : 'hidden lg:grid'}`}>
+        {/* Filters */}
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           <select value={division} onChange={(e) => setDivision(e.target.value)} className="input text-sm">
             <option value="">All Divisions</option>
             {divisions.map((d) => <option key={d}>{d}</option>)}
