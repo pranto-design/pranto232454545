@@ -52,19 +52,7 @@ export default function ComparePage() {
   }, [offerings, selectedOfferingIds]);
 
   if (offerings.length === 0) {
-    return (
-      <div className="container-page py-20">
-        <EmptyState
-          title="No programs selected for comparison"
-          message="Browse a university's Programs & Tuition tab (or the Programs page) and click Compare on similar programs to compare them by facilities, tuition, credits, and admission requirements."
-          icon={<GitCompare size={32} />}
-        />
-        <div className="text-center mt-6 flex items-center justify-center gap-3 flex-wrap">
-          <Link to="/universities" className="btn-primary">Browse Universities</Link>
-          <Link to="/programs" className="btn-secondary">Browse Programs</Link>
-        </div>
-      </div>
-    );
+    return <SubjectComparisonView />;
   }
 
   return (
@@ -636,3 +624,114 @@ function OverviewTable({ offerings, onRemove }: { offerings: Offering[]; onRemov
 // Dummy use of School icon to prevent unused-import warnings (kept for future use)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _SchoolIcon = School;
+
+/* -----------------------------------------------------------
+   SUBJECT COMPARISON VIEW (Default View)
+----------------------------------------------------------- */
+function SubjectComparisonView() {
+  const availablePrograms = useMemo(() => {
+    // Only show programs that have at least one offering
+    return programs.filter((p) => programOfferings.some((o) => o.programId === p.id));
+  }, []);
+
+  const [selectedProgramId, setSelectedProgramId] = useState(availablePrograms[0]?.id || '');
+
+  const selectedProgram = getProgramById(selectedProgramId);
+  const currentOfferings = useMemo(() => {
+    return programOfferings.filter((o) => o.programId === selectedProgramId);
+  }, [selectedProgramId]);
+
+  if (!selectedProgram) return null;
+
+  return (
+    <div className="container-page py-10 sm:py-16">
+      {/* Subject Selection */}
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-ink-900">Compare Programs by Subject</h1>
+          <p className="text-ink-500 mt-1">Select a subject to see a complete cost breakdown across universities.</p>
+        </div>
+        <div className="min-w-[240px]">
+          <select
+            className="input-field w-full bg-white shadow-sm"
+            value={selectedProgramId}
+            onChange={(e) => setSelectedProgramId(e.target.value)}
+          >
+            {availablePrograms.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* The Table */}
+      <div className="card overflow-hidden !p-0 border border-ink-200 shadow-sm rounded-2xl">
+        <div className="p-5 sm:p-6 border-b border-ink-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white">
+          <div>
+            <h2 className="text-lg font-bold text-ink-900 tracking-tight">Complete Cost Breakdown by Program</h2>
+            <p className="text-sm text-ink-500 mt-0.5">All figures in BDT unless otherwise noted</p>
+          </div>
+          <span className="text-sm font-semibold text-emeraldAccent-700 bg-emeraldAccent-50 px-3 py-1 rounded-full border border-emeraldAccent-100">
+            {currentOfferings.length} Programs
+          </span>
+        </div>
+        
+        <div className="overflow-x-auto bg-white">
+          <table className="w-full text-sm text-left">
+            <thead>
+              <tr className="border-b border-ink-100 text-ink-500">
+                <th className="py-4 px-5 font-medium whitespace-nowrap">
+                  Program <span className="font-bold text-ink-900 ml-1">{selectedProgram.slug.toUpperCase()}</span>
+                </th>
+                <th className="py-4 px-5 font-medium whitespace-nowrap">Degree</th>
+                <th className="py-4 px-5 font-medium whitespace-nowrap">Duration</th>
+                <th className="py-4 px-5 font-medium whitespace-nowrap">Credits</th>
+                <th className="py-4 px-5 font-medium whitespace-nowrap">Per Credit</th>
+                <th className="py-4 px-5 font-medium whitespace-nowrap">Admission</th>
+                <th className="py-4 px-5 font-medium whitespace-nowrap">Other/Sem</th>
+                <th className="py-4 px-5 font-medium whitespace-nowrap text-right">Est. Total</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-ink-100">
+              {currentOfferings.map((o) => {
+                const uni = getUniversityById(o.universityId);
+                if (!uni) return null;
+                const otherPerSem = o.labFee + o.otherFees + o.semesterFee;
+                
+                return (
+                  <tr key={o.id} className="hover:bg-ink-50/50 transition-colors">
+                    <td className="py-5 px-5 whitespace-nowrap">
+                      <div className="flex items-center gap-3">
+                        <Link to={`/universities/${uni.slug}`} className="font-semibold text-ink-900 text-base hover:text-brand-600 transition-colors">
+                          {uni.name}
+                        </Link>
+                      </div>
+                    </td>
+                    <td className="py-5 px-5 font-medium text-ink-700 whitespace-nowrap">{o.degree}</td>
+                    <td className="py-5 px-5 text-ink-600 whitespace-nowrap">{o.durationYears} yrs</td>
+                    <td className="py-5 px-5 font-medium text-ink-800 whitespace-nowrap">{o.totalCredits}</td>
+                    <td className="py-5 px-5 text-ink-600 whitespace-nowrap">{formatBDTFull(o.tuitionPerCredit)}</td>
+                    <td className="py-5 px-5 text-ink-600 whitespace-nowrap">{formatBDTFull(o.admissionFee)}</td>
+                    <td className="py-5 px-5 text-ink-600 whitespace-nowrap">{formatBDTFull(otherPerSem)}</td>
+                    <td className="py-5 px-5 text-right whitespace-nowrap">
+                      <span className="inline-flex items-center justify-center font-bold text-emeraldAccent-800 bg-emeraldAccent-50/80 px-3 py-1.5 rounded-lg">
+                        {formatBDT(o.totalTuitionEstimate)}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+              {currentOfferings.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="py-10 text-center text-ink-500">
+                    No offerings found for this program.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
