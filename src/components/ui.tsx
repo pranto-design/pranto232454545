@@ -68,17 +68,19 @@ export function CompareButton({ offeringId }: { offeringId: string }) {
   );
 }
 
-export function SaveButton({ universityId }: { universityId: string }) {
+export function SaveButton({ universityId, className, variant = 'dark' }: { universityId: string; className?: string; variant?: 'dark' | 'light' }) {
   const { isUniversitySaved, toggleUniversity } = useSaved();
   const saved = isUniversitySaved(universityId);
   return (
     <button
       onClick={() => toggleUniversity(universityId)}
-      className={`btn text-xs px-3 py-2 ${
+      className={`btn text-xs px-3.5 py-2 sm:py-2.5 transition-all ${
         saved
           ? 'bg-accent-600 text-white hover:bg-accent-700'
-          : 'bg-white text-ink-700 border border-ink-200 hover:border-accent-300 hover:bg-accent-50'
-      }`}
+          : variant === 'light'
+          ? 'bg-white text-ink-700 border border-ink-200 hover:border-accent-300 hover:bg-accent-50'
+          : 'bg-white/15 text-white border border-white/25 hover:bg-white/25 backdrop-blur-sm'
+      } ${className || ''}`}
     >
       {saved ? '✓ Saved' : '+ Save'}
     </button>
@@ -103,12 +105,12 @@ export function SectionHeader({
   title: string; subtitle?: string; action?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-end justify-between gap-4 mb-6">
-      <div>
-        <h2 className="section-title">{title}</h2>
-        {subtitle && <p className="section-sub">{subtitle}</p>}
+    <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4 mb-6 w-full max-w-full">
+      <div className="min-w-0 flex-1">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-ink-900 leading-snug break-words">{title}</h2>
+        {subtitle && <p className="text-xs sm:text-sm md:text-base text-ink-500 mt-1 leading-relaxed break-words">{subtitle}</p>}
       </div>
-      {action}
+      {action && <div className="shrink-0 self-start sm:self-auto">{action}</div>}
     </div>
   );
 }

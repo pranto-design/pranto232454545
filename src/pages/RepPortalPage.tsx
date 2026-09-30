@@ -68,21 +68,21 @@ export default function RepPortalPage() {
           </div>
         </div>
 
-        <div className="p-6 lg:p-8">
+        <div className="p-4 sm:p-6 lg:p-8">
           {active === 'overview' && (
             <div className="animate-fade-in">
-              <h1 className="text-2xl font-bold text-ink-900 mb-1">Welcome, Representative</h1>
-              <p className="text-sm text-ink-500 mb-6">Manage {claimedUni.name}'s profile and engage with students.</p>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              <h1 className="text-xl sm:text-2xl font-bold text-ink-900 mb-1">Welcome, Representative</h1>
+              <p className="text-xs sm:text-sm text-ink-500 mb-6">Manage {claimedUni.name}'s profile and engage with students.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 {[
                   { label: 'Profile Views', value: '4,210', icon: BarChart3 },
                   { label: 'Programs Listed', value: claimedUni.programCount.toString(), icon: BookOpen },
                   { label: 'Student Inquiries', value: studentLeads.length.toString(), icon: Mail },
                   { label: 'Community Replies', value: '12', icon: MessageSquare },
                 ].map((s) => (
-                  <div key={s.label} className="card p-5">
+                  <div key={s.label} className="card p-4 sm:p-5">
                     <s.icon size={20} className="text-brand-600 mb-2" />
-                    <p className="text-2xl font-bold font-display">{s.value}</p>
+                    <p className="text-xl sm:text-2xl font-bold font-display">{s.value}</p>
                     <p className="text-xs text-ink-500">{s.label}</p>
                   </div>
                 ))}
@@ -90,10 +90,10 @@ export default function RepPortalPage() {
               <div className="card p-5">
                 <h3 className="font-semibold mb-3">Quick Actions</h3>
                 <div className="flex flex-wrap gap-2">
-                  <button onClick={() => setActive('profile')} className="btn-secondary text-sm">Update Profile</button>
-                  <button onClick={() => setActive('tuition')} className="btn-secondary text-sm">Update Tuition</button>
-                  <button onClick={() => setActive('admission')} className="btn-secondary text-sm">Update Admission Info</button>
-                  <button onClick={() => setActive('questions')} className="btn-primary text-sm">Answer Questions</button>
+                  <button onClick={() => setActive('profile')} className="btn-secondary text-xs sm:text-sm">Update Profile</button>
+                  <button onClick={() => setActive('tuition')} className="btn-secondary text-xs sm:text-sm">Update Tuition</button>
+                  <button onClick={() => setActive('admission')} className="btn-secondary text-xs sm:text-sm">Update Admission Info</button>
+                  <button onClick={() => setActive('questions')} className="btn-primary text-xs sm:text-sm">Answer Questions</button>
                 </div>
               </div>
             </div>
@@ -101,8 +101,8 @@ export default function RepPortalPage() {
 
           {active === 'profile' && (
             <div className="animate-fade-in">
-              <h1 className="text-2xl font-bold text-ink-900 mb-4">Edit University Profile</h1>
-              <div className="card p-6 space-y-4">
+              <h1 className="text-xl sm:text-2xl font-bold text-ink-900 mb-4">Edit University Profile</h1>
+              <div className="card p-4 sm:p-6 space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div><label className="text-xs font-medium text-ink-600 mb-1 block">University Name</label><input className="input" defaultValue={claimedUni.name} /></div>
                   <div><label className="text-xs font-medium text-ink-600 mb-1 block">Short Name</label><input className="input" defaultValue={claimedUni.shortName} /></div>
@@ -117,24 +117,26 @@ export default function RepPortalPage() {
 
           {active === 'programs' && (
             <div className="animate-fade-in">
-              <h1 className="text-2xl font-bold text-ink-900 mb-4">Manage Programs</h1>
-              <div className="card overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-ink-50 text-left text-ink-500"><tr><th className="p-3 font-medium">Program</th><th className="p-3 font-medium">Credits</th><th className="p-3 font-medium">Tuition/Credit</th><th className="p-3 font-medium">Actions</th></tr></thead>
-                  <tbody>
-                    {programs.slice(0, 6).map((p) => (
-                      <tr key={p.id} className="border-t border-ink-100"><td className="p-3 font-medium">{p.name}</td><td className="p-3">{p.avgCredits}</td><td className="p-3">৳{p.avgTuitionMin.toLocaleString()}</td><td className="p-3"><button className="text-xs text-brand-600 hover:underline">Edit</button></td></tr>
-                    ))}
-                  </tbody>
-                </table>
+              <h1 className="text-xl sm:text-2xl font-bold text-ink-900 mb-4">Manage Programs</h1>
+              <div className="card overflow-hidden !p-0">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm min-w-[500px]">
+                    <thead className="bg-ink-50 text-left text-ink-500"><tr><th className="p-3 font-medium">Program</th><th className="p-3 font-medium">Credits</th><th className="p-3 font-medium">Tuition/Credit</th><th className="p-3 font-medium">Actions</th></tr></thead>
+                    <tbody>
+                      {programs.slice(0, 6).map((p) => (
+                        <tr key={p.id} className="border-t border-ink-100"><td className="p-3 font-medium">{p.name}</td><td className="p-3">{p.avgCredits}</td><td className="p-3">৳{p.avgTuitionMin.toLocaleString()}</td><td className="p-3"><button className="text-xs text-brand-600 hover:underline">Edit</button></td></tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
 
           {(active === 'tuition' || active === 'admission' || active === 'scholarships') && (
             <div className="animate-fade-in">
-              <h1 className="text-2xl font-bold text-ink-900 mb-4">{sidebarItems.find((i) => i.id === active)?.label}</h1>
-              <div className="card p-6">
+              <h1 className="text-xl sm:text-2xl font-bold text-ink-900 mb-4">{sidebarItems.find((i) => i.id === active)?.label}</h1>
+              <div className="card p-4 sm:p-6">
                 <p className="text-sm text-ink-500 mb-4">Update {claimedUni.name}'s {active} information. Changes will be marked as "University Verified" after saving.</p>
                 <div className="space-y-3">
                   <div><label className="text-xs font-medium text-ink-600 mb-1 block">Field Name</label><input className="input" placeholder="Enter value" /></div>
@@ -147,7 +149,7 @@ export default function RepPortalPage() {
 
           {active === 'questions' && (
             <div className="animate-fade-in">
-              <h1 className="text-2xl font-bold text-ink-900 mb-4">Student Questions</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-ink-900 mb-4">Student Questions</h1>
               <div className="space-y-3">
                 {communityPosts.filter((p) => p.type === 'question').slice(0, 4).map((p) => (
                   <div key={p.id} className="card p-4">
@@ -162,24 +164,26 @@ export default function RepPortalPage() {
 
           {active === 'inquiries' && (
             <div className="animate-fade-in">
-              <h1 className="text-2xl font-bold text-ink-900 mb-4">Student Inquiries</h1>
-              <div className="card overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-ink-50 text-left text-ink-500"><tr><th className="p-3 font-medium">Name</th><th className="p-3 font-medium">Contact</th><th className="p-3 font-medium">Background</th><th className="p-3 font-medium">Date</th></tr></thead>
-                  <tbody>
-                    {studentLeads.map((l) => (
-                      <tr key={l.id} className="border-t border-ink-100"><td className="p-3 font-medium">{l.name}</td><td className="p-3 text-xs">{l.phone}</td><td className="p-3">{l.background}</td><td className="p-3">{l.date}</td></tr>
-                    ))}
-                  </tbody>
-                </table>
+              <h1 className="text-xl sm:text-2xl font-bold text-ink-900 mb-4">Student Inquiries</h1>
+              <div className="card overflow-hidden !p-0">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm min-w-[500px]">
+                    <thead className="bg-ink-50 text-left text-ink-500"><tr><th className="p-3 font-medium">Name</th><th className="p-3 font-medium">Contact</th><th className="p-3 font-medium">Background</th><th className="p-3 font-medium">Date</th></tr></thead>
+                    <tbody>
+                      {studentLeads.map((l) => (
+                        <tr key={l.id} className="border-t border-ink-100"><td className="p-3 font-medium">{l.name}</td><td className="p-3 text-xs">{l.phone}</td><td className="p-3">{l.background}</td><td className="p-3">{l.date}</td></tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
 
           {active === 'analytics' && (
             <div className="animate-fade-in">
-              <h1 className="text-2xl font-bold text-ink-900 mb-4">Analytics</h1>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+              <h1 className="text-xl sm:text-2xl font-bold text-ink-900 mb-4">Analytics</h1>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[
                   { label: 'Profile Views (30d)', value: '4,210' },
                   { label: 'Program Page Views', value: '2,890' },

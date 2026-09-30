@@ -57,8 +57,10 @@ export default function CalculatorPage() {
   return (
     <div className="container-page py-10">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-ink-900 flex items-center gap-2"><Calculator className="text-brand-600" /> Tuition Fee Calculator</h1>
-        <p className="text-ink-500 mt-2">Estimate your total university cost including tuition, fees, and scholarships. All amounts in BDT (৳).</p>
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-ink-900 flex items-center gap-2 flex-wrap">
+          <Calculator className="text-brand-600 shrink-0" /> <span>Tuition Fee Calculator</span>
+        </h1>
+        <p className="text-xs sm:text-sm text-ink-500 mt-2">Estimate your total university cost including tuition, fees, and scholarships. All amounts in BDT (৳).</p>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
@@ -120,7 +122,7 @@ export default function CalculatorPage() {
         <div className="space-y-4">
           <div className="card p-6 bg-gradient-to-br from-brand-600 to-accent-700 text-white">
             <p className="text-sm text-brand-100">Estimated Total Cost</p>
-            <p className="text-4xl font-bold font-display mt-1">{formatBDTFull(calc.total)}</p>
+            <p className="text-2xl sm:text-4xl font-bold font-display mt-1 break-words">{formatBDTFull(calc.total)}</p>
             <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
               <div className="bg-white/10 rounded-lg p-3">
                 <p className="text-brand-200 text-xs">Per Semester</p>

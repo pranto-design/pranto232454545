@@ -80,18 +80,18 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <div className="p-6 lg:p-8">
+        <div className="p-4 sm:p-6 lg:p-8">
           {active === 'overview' && (
             <div className="animate-fade-in">
-              <h1 className="text-2xl font-bold text-ink-900 mb-1">Dashboard Overview</h1>
-              <p className="text-sm text-ink-500 mb-6">Platform statistics and activity summary.</p>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+              <h1 className="text-xl sm:text-2xl font-bold text-ink-900 mb-1">Dashboard Overview</h1>
+              <p className="text-xs sm:text-sm text-ink-500 mb-6">Platform statistics and activity summary.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
                 {stats.map((s) => (
-                  <div key={s.label} className="card p-5">
+                  <div key={s.label} className="card p-4 sm:p-5">
                     <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center text-white mb-3`}>
                       <s.icon size={20} />
                     </div>
-                    <p className="text-2xl font-bold font-display text-ink-900">{s.value}</p>
+                    <p className="text-xl sm:text-2xl font-bold font-display text-ink-900">{s.value}</p>
                     <p className="text-xs text-ink-500">{s.label}</p>
                     <p className="text-xs text-emerald-600 mt-1">{s.change} this month</p>
                   </div>
@@ -132,73 +132,79 @@ export default function AdminPage() {
 
           {active === 'universities' && (
             <div className="animate-fade-in">
-              <h1 className="text-2xl font-bold text-ink-900 mb-4">Manage Universities</h1>
-              <div className="card overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-ink-50 text-left text-ink-500">
-                    <tr><th className="p-3 font-medium">University</th><th className="p-3 font-medium">Location</th><th className="p-3 font-medium">Programs</th><th className="p-3 font-medium">Rating</th><th className="p-3 font-medium">Status</th></tr>
-                  </thead>
-                  <tbody>
-                    {universities.map((u) => (
-                      <tr key={u.id} className="border-t border-ink-100 hover:bg-ink-50/50">
-                        <td className="p-3 font-medium text-ink-800">{u.name}</td>
-                        <td className="p-3">{u.location}</td>
-                        <td className="p-3">{u.programCount}</td>
-                        <td className="p-3">★ {u.rating}</td>
-                        <td className="p-3"><span className="chip-success text-[10px]">Active</span></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <h1 className="text-xl sm:text-2xl font-bold text-ink-900 mb-4">Manage Universities</h1>
+              <div className="card overflow-hidden !p-0">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm min-w-[540px]">
+                    <thead className="bg-ink-50 text-left text-ink-500">
+                      <tr><th className="p-3 font-medium">University</th><th className="p-3 font-medium">Location</th><th className="p-3 font-medium">Programs</th><th className="p-3 font-medium">Rating</th><th className="p-3 font-medium">Status</th></tr>
+                    </thead>
+                    <tbody>
+                      {universities.map((u) => (
+                        <tr key={u.id} className="border-t border-ink-100 hover:bg-ink-50/50">
+                          <td className="p-3 font-medium text-ink-800">{u.name}</td>
+                          <td className="p-3">{u.location}</td>
+                          <td className="p-3">{u.programCount}</td>
+                          <td className="p-3">★ {u.rating}</td>
+                          <td className="p-3"><span className="chip-success text-[10px]">Active</span></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
 
           {active === 'programs' && (
             <div className="animate-fade-in">
-              <h1 className="text-2xl font-bold text-ink-900 mb-4">Manage Programs</h1>
-              <div className="card overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-ink-50 text-left text-ink-500">
-                    <tr><th className="p-3 font-medium">Program</th><th className="p-3 font-medium">Category</th><th className="p-3 font-medium">Universities</th><th className="p-3 font-medium">Avg Credits</th></tr>
-                  </thead>
-                  <tbody>
-                    {programs.map((p) => (
-                      <tr key={p.id} className="border-t border-ink-100 hover:bg-ink-50/50">
-                        <td className="p-3 font-medium text-ink-800">{p.name}</td>
-                        <td className="p-3">{p.category}</td>
-                        <td className="p-3">{p.offeringUniversityIds.length}</td>
-                        <td className="p-3">{p.avgCredits}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <h1 className="text-xl sm:text-2xl font-bold text-ink-900 mb-4">Manage Programs</h1>
+              <div className="card overflow-hidden !p-0">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm min-w-[500px]">
+                    <thead className="bg-ink-50 text-left text-ink-500">
+                      <tr><th className="p-3 font-medium">Program</th><th className="p-3 font-medium">Category</th><th className="p-3 font-medium">Universities</th><th className="p-3 font-medium">Avg Credits</th></tr>
+                    </thead>
+                    <tbody>
+                      {programs.map((p) => (
+                        <tr key={p.id} className="border-t border-ink-100 hover:bg-ink-50/50">
+                          <td className="p-3 font-medium text-ink-800">{p.name}</td>
+                          <td className="p-3">{p.category}</td>
+                          <td className="p-3">{p.offeringUniversityIds.length}</td>
+                          <td className="p-3">{p.avgCredits}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
 
           {active === 'admissions' && (
             <div className="animate-fade-in">
-              <h1 className="text-2xl font-bold text-ink-900 mb-4">Admission Notices</h1>
-              <div className="card overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-ink-50 text-left text-ink-500">
-                    <tr><th className="p-3 font-medium">University</th><th className="p-3 font-medium">Title</th><th className="p-3 font-medium">Deadline</th><th className="p-3 font-medium">Status</th></tr>
-                  </thead>
-                  <tbody>
-                    {admissionNotices.map((a) => {
-                      const uni = getUniversityById(a.universityId);
-                      return (
-                        <tr key={a.id} className="border-t border-ink-100 hover:bg-ink-50/50">
-                          <td className="p-3 font-medium text-ink-800">{uni?.shortName}</td>
-                          <td className="p-3">{a.title}</td>
-                          <td className="p-3">{a.deadline}</td>
-                          <td className="p-3"><span className="chip-success text-[10px]">Published</span></td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+              <h1 className="text-xl sm:text-2xl font-bold text-ink-900 mb-4">Admission Notices</h1>
+              <div className="card overflow-hidden !p-0">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm min-w-[500px]">
+                    <thead className="bg-ink-50 text-left text-ink-500">
+                      <tr><th className="p-3 font-medium">University</th><th className="p-3 font-medium">Title</th><th className="p-3 font-medium">Deadline</th><th className="p-3 font-medium">Status</th></tr>
+                    </thead>
+                    <tbody>
+                      {admissionNotices.map((a) => {
+                        const uni = getUniversityById(a.universityId);
+                        return (
+                          <tr key={a.id} className="border-t border-ink-100 hover:bg-ink-50/50">
+                            <td className="p-3 font-medium text-ink-800">{uni?.shortName}</td>
+                            <td className="p-3">{a.title}</td>
+                            <td className="p-3">{a.deadline}</td>
+                            <td className="p-3"><span className="chip-success text-[10px]">Published</span></td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
@@ -277,26 +283,28 @@ export default function AdminPage() {
 
           {active === 'leads' && (
             <div className="animate-fade-in">
-              <h1 className="text-2xl font-bold text-ink-900 mb-4">Student Inquiries (Leads)</h1>
-              <div className="card overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-ink-50 text-left text-ink-500">
-                    <tr><th className="p-3 font-medium">Name</th><th className="p-3 font-medium">Contact</th><th className="p-3 font-medium">Interest</th><th className="p-3 font-medium">Date</th></tr>
-                  </thead>
-                  <tbody>
-                    {studentLeads.map((l) => {
-                      const uni = l.preferredUniversityId ? getUniversityById(l.preferredUniversityId) : null;
-                      return (
-                        <tr key={l.id} className="border-t border-ink-100">
-                          <td className="p-3 font-medium">{l.name}</td>
-                          <td className="p-3 text-xs">{l.phone}<br />{l.email}</td>
-                          <td className="p-3">{uni?.shortName || 'Any'}</td>
-                          <td className="p-3">{l.date}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+              <h1 className="text-xl sm:text-2xl font-bold text-ink-900 mb-4">Student Inquiries (Leads)</h1>
+              <div className="card overflow-hidden !p-0">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm min-w-[500px]">
+                    <thead className="bg-ink-50 text-left text-ink-500">
+                      <tr><th className="p-3 font-medium">Name</th><th className="p-3 font-medium">Contact</th><th className="p-3 font-medium">Interest</th><th className="p-3 font-medium">Date</th></tr>
+                    </thead>
+                    <tbody>
+                      {studentLeads.map((l) => {
+                        const uni = l.preferredUniversityId ? getUniversityById(l.preferredUniversityId) : null;
+                        return (
+                          <tr key={l.id} className="border-t border-ink-100">
+                            <td className="p-3 font-medium">{l.name}</td>
+                            <td className="p-3 text-xs">{l.phone}<br />{l.email}</td>
+                            <td className="p-3">{uni?.shortName || 'Any'}</td>
+                            <td className="p-3">{l.date}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}

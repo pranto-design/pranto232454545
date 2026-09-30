@@ -20,8 +20,10 @@ export default function ScholarshipsPage() {
   return (
     <div className="container-page py-10">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-ink-900 flex items-center gap-2"><Award className="text-brand-600" /> Scholarships</h1>
-        <p className="text-ink-500 mt-2">Find scholarships available at private universities in Bangladesh. Filter by GPA and university.</p>
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-ink-900 flex items-center gap-2 flex-wrap">
+          <Award className="text-brand-600 shrink-0" /> <span>Scholarships</span>
+        </h1>
+        <p className="text-xs sm:text-sm text-ink-500 mt-2">Find scholarships available at private universities in Bangladesh. Filter by GPA and university.</p>
       </div>
 
       <div className="card p-4 mb-6">

@@ -31,19 +31,19 @@ const footerLinks = {
 export default function Footer() {
   return (
     <footer className="bg-navy-900 text-ink-300 mt-20">
-      <div className="container-page py-14">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
-          <div className="col-span-2">
+      <div className="container-page py-10 sm:py-14">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+          <div className="col-span-1 sm:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-brand-500 to-accent-500 flex items-center justify-center text-white">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-brand-500 to-accent-500 flex items-center justify-center text-white shrink-0">
                 <GraduationCap size={22} />
               </div>
               <span className="font-display font-bold text-xl text-white">UniVara</span>
             </Link>
-            <p className="text-sm text-ink-400 max-w-xs leading-relaxed">
+            <p className="text-xs sm:text-sm text-ink-400 max-w-xs leading-relaxed">
               The largest organized private university information and student community platform in Bangladesh. Find, compare, and choose the right university for your future.
             </p>
-            <div className="flex gap-3 mt-5">
+            <div className="flex gap-3 mt-5 flex-wrap">
               {[Facebook, Youtube, Instagram, Mail].map((Icon, i) => (
                 <a
                   key={i}

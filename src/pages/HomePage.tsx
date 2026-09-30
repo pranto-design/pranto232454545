@@ -226,7 +226,7 @@ function ProgramExplorer() {
           <button
             key={c}
             onClick={() => setActiveCategory(c)}
-            className={`chip whitespace-nowrap transition-all ${activeCategory === c ? 'bg-brand-600 text-white border-brand-600 shadow-md scale-105' : 'chip-muted hover:bg-ink-200'}`}
+            className={`chip whitespace-nowrap shrink-0 transition-all ${activeCategory === c ? 'bg-brand-600 text-white border-brand-600 shadow-md scale-105' : 'chip-muted hover:bg-ink-200'}`}
           >
             {c}
           </button>
@@ -415,15 +415,15 @@ function AdmissionTimeline() {
                   {notice.daysLeft}
                 </div>
               </div>
-              <Link to={`/universities/${uni.slug}`} className="card card-hover p-4 flex-1 flex items-center gap-3">
+              <Link to={`/universities/${uni.slug}`} className="card card-hover p-4 flex-1 min-w-0 flex items-center gap-3 overflow-hidden w-full">
                 <UniversityLogo uni={uni} size="sm" />
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm text-ink-900 truncate">{notice.title}</p>
-                  <p className="text-xs text-ink-500">{uni.name}</p>
+                <div className="flex-1 min-w-0 overflow-hidden">
+                  <p className="font-semibold text-sm text-ink-900 truncate w-full">{notice.title}</p>
+                  <p className="text-xs text-ink-500 truncate w-full">{uni.name}</p>
                 </div>
-                <div className="text-right shrink-0">
+                <div className="text-right shrink-0 ml-auto">
                   <p className={`text-xs font-bold ${urgency === 'rose' ? 'text-rose-600' : urgency === 'amber' ? 'text-amber-600' : 'text-emerald-600'}`}>
-                    {notice.daysLeft} days left
+                    {notice.daysLeft}d
                   </p>
                   <p className="text-[10px] text-ink-400">{notice.deadline}</p>
                 </div>
@@ -674,7 +674,7 @@ export default function HomePage() {
       </section>
 
       {/* ===== ADMISSION TIMELINE + COMMUNITY ===== */}
-      <section className="bg-ink-100 py-16">
+      <section className="bg-ink-100 py-16 overflow-hidden">
         <div className="container-page">
           <div className="grid lg:grid-cols-2 gap-8">
             <div>
@@ -690,19 +690,19 @@ export default function HomePage() {
               />
               <div className="space-y-3">
                 {communityPosts.slice(0, 4).map((post) => (
-                  <Link key={post.id} to="/community" className="card card-hover p-4 group block">
-                    <div className="flex items-start gap-3">
+                  <Link key={post.id} to="/community" className="card card-hover p-4 group block overflow-hidden">
+                    <div className="flex items-start gap-3 min-w-0">
                       <div className={`h-9 w-9 rounded-full ${post.authorAvatarColor} flex items-center justify-center text-white text-sm font-semibold shrink-0`}>
                         {post.authorName.charAt(0)}
                       </div>
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1 min-w-0 overflow-hidden">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs font-medium text-ink-800">{post.authorName}</span>
+                          <span className="text-xs font-medium text-ink-800 truncate max-w-[100px]">{post.authorName}</span>
                           {post.verifiedBadge && <span className="badge-verified text-[10px]"><BadgeCheck size={9} /> {post.verifiedBadge}</span>}
-                          <span className="chip-brand text-[10px]">{post.category}</span>
+                          <span className="chip-brand text-[10px] truncate">{post.category}</span>
                         </div>
-                        <h3 className="mt-1 font-semibold text-sm text-ink-900 group-hover:text-brand-700 line-clamp-1">{post.title}</h3>
-                        <div className="mt-1 flex items-center gap-3 text-[11px] text-ink-500">
+                        <h3 className="mt-1 font-semibold text-sm text-ink-900 group-hover:text-brand-700 truncate w-full">{post.title}</h3>
+                        <div className="mt-1 flex items-center gap-3 text-[11px] text-ink-500 flex-wrap">
                           <span>▲ {post.upvotes}</span>
                           <span><MessageSquare size={10} className="inline" /> {post.comments.length}</span>
                           <span>{post.date}</span>

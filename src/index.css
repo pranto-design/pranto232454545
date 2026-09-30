@@ -4,18 +4,46 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===== GLOBAL OVERFLOW FIX ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
   }
   body {
     @apply bg-bgSaaS text-ink-700 font-sans antialiased;
+    overflow-x: clip;
+    max-width: 100%;
+    width: 100%;
+    word-break: break-word;
+    overflow-wrap: break-word;
     background-image: radial-gradient(at 0% 0%, rgba(15, 118, 110, 0.04) 0px, transparent 50%),
                       radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.04) 0px, transparent 50%);
     background-attachment: fixed;
+  }
+  #root {
+    overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
+  }
+  img, svg, video, canvas, audio, iframe, embed, object {
+    max-width: 100%;
+    height: auto;
+  }
+  table {
+    border-collapse: collapse;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-display tracking-tight text-ink-900;

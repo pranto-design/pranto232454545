@@ -26,8 +26,10 @@ export default function AdmissionPage() {
   return (
     <div className="container-page py-10">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-ink-900 flex items-center gap-2"><Bell className="text-brand-600" /> Admission Hub</h1>
-        <p className="text-ink-500 mt-2">Latest admission notices, deadlines, and test dates for Fall 2026 intake.</p>
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-ink-900 flex items-center gap-2 flex-wrap">
+          <Bell className="text-brand-600 shrink-0" /> <span>Admission Hub</span>
+        </h1>
+        <p className="text-xs sm:text-sm text-ink-500 mt-2">Latest admission notices, deadlines, and test dates for Fall 2026 intake.</p>
       </div>
 
       {/* Calendar strip */}

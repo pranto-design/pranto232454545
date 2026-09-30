@@ -233,8 +233,8 @@ export default function UniversityProfilePage() {
 
   return (
     <div className="min-h-screen">
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 h-[200px] sm:h-[260px] lg:h-[300px]">
+      <section className="relative overflow-hidden bg-navy-950">
+        <div className="absolute inset-0 pointer-events-none">
           <img
             src={`https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${encodeURIComponent(`modern university campus building with glass facade, green courtyard, students walking, professional photography, golden hour lighting, wide angle, hyperrealistic`)}&image_size=landscape_16_9`}
             alt={`${uni.name} campus`}
@@ -244,8 +244,8 @@ export default function UniversityProfilePage() {
           <div className="absolute inset-0 hero-gradient" />
         </div>
 
-        <div className="relative">
-          <div className="container-page pt-4 sm:pt-6 pb-5 sm:pb-7">
+        <div className="relative z-10">
+          <div className="container-page pt-4 sm:pt-6 pb-6 sm:pb-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -264,11 +264,17 @@ export default function UniversityProfilePage() {
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <h1 className="text-lg sm:text-xl lg:text-3xl font-bold tracking-tight text-white leading-[1.15] sm:leading-[1.1]">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-white leading-[1.15] sm:leading-[1.1] break-words">
                     {uni.name}
                   </h1>
-                  <p className="mt-1 text-xs sm:text-sm lg:text-base text-white/70 font-medium truncate">
-                    {uni.shortName} • Est. {uni.established} • {uni.location} • {uni.programCount} Programs
+                  <p className="mt-1 text-xs sm:text-sm lg:text-base text-white/80 font-medium flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                    <span>{uni.shortName}</span>
+                    <span>•</span>
+                    <span>Est. {uni.established}</span>
+                    <span>•</span>
+                    <span>{uni.location}</span>
+                    <span>•</span>
+                    <span>{uni.programCount} Programs</span>
                   </p>
                 </div>
               </div>
@@ -277,20 +283,22 @@ export default function UniversityProfilePage() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="mt-4 sm:mt-5 grid grid-cols-2 sm:flex sm:flex-wrap gap-2"
+                className="mt-4 sm:mt-5 flex flex-wrap items-center gap-2 w-full"
               >
-                <button className="btn-primary text-[11px] sm:text-sm px-3 sm:px-5 py-2 sm:py-2.5 col-span-2 sm:col-span-1">
+                <button className="btn-primary text-xs sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 flex-1 sm:flex-none justify-center">
                   <Send size={13} strokeWidth={2.2} /> Apply Now
                 </button>
                 <a
                   href={uni.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-secondary text-[11px] sm:text-sm px-3 sm:px-5 py-2 sm:py-2.5 !bg-white/10 !text-white !border-white/20 hover:!bg-white/15 col-span-2 sm:col-span-1"
+                  className="btn-secondary text-xs sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 !bg-white/15 !text-white !border-white/25 hover:!bg-white/25 backdrop-blur-sm flex-1 sm:flex-none justify-center"
                 >
                   <Globe size={13} /> Website
                 </a>
-                <SaveButton universityId={uni.id} />
+                <div className="flex-1 sm:flex-none flex justify-center">
+                  <SaveButton universityId={uni.id} className="w-full justify-center" />
+                </div>
               </motion.div>
             </motion.div>
           </div>
@@ -393,12 +401,12 @@ export default function UniversityProfilePage() {
 
                                   if (offering) {
                                     const prog = getProgramById(offering.programId);
+                                    const progSlug = prog?.slug || 'cse';
                                     return (
-                                      <motion.div
+                                      <Link
                                         key={deptName}
-                                        variants={fadeUp}
-                                        custom={di}
-                                        className="group relative p-5 rounded-2xl bg-white border border-borderLine hover:border-primary-200 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+                                        to={`/programs/${progSlug}`}
+                                        className="group relative p-5 rounded-2xl bg-white border border-borderLine hover:border-primary-200 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 overflow-hidden block cursor-pointer"
                                       >
                                         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary-50 via-primary-50 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                         <div className="relative z-10">
@@ -434,18 +442,18 @@ export default function UniversityProfilePage() {
                                             ))}
                                           </div>
                                         </div>
-                                      </motion.div>
+                                      </Link>
                                     );
                                   }
 
                                   return (
-                                    <div key={deptName} className="p-5 rounded-2xl bg-ink-50/50 border border-dashed border-ink-200">
-                                      <div className="h-9 w-9 rounded-xl bg-white border border-ink-100 flex items-center justify-center text-ink-400 mb-3">
+                                    <Link key={deptName} to="/programs" className="p-5 rounded-2xl bg-ink-50/50 border border-dashed border-ink-200 hover:border-primary-300 hover:bg-primary-50/20 transition-all block cursor-pointer group">
+                                      <div className="h-9 w-9 rounded-xl bg-white border border-ink-100 flex items-center justify-center text-ink-400 group-hover:text-primary-600 mb-3 transition-colors">
                                         <BookMarked size={16} />
                                       </div>
-                                      <p className="font-semibold text-ink-500 text-sm">{deptName}</p>
-                                      <p className="text-[11px] text-ink-400 mt-1 italic">Details coming soon</p>
-                                    </div>
+                                      <p className="font-semibold text-ink-700 group-hover:text-primary-700 text-sm transition-colors">{deptName}</p>
+                                      <p className="text-[11px] text-primary-600 font-medium mt-1">Explore Programs →</p>
+                                    </Link>
                                   );
                                 })}
                               </div>
@@ -496,11 +504,11 @@ export default function UniversityProfilePage() {
                           className="input pl-12"
                         />
                       </div>
-                      <div className="flex gap-3 flex-wrap">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                         <select
                           value={programDeptFilter}
                           onChange={(e) => setProgramDeptFilter(e.target.value)}
-                          className="input-sm min-w-[150px]"
+                          className="input-sm w-full min-w-0"
                         >
                           <option value="all">All Departments</option>
                           {uni.faculties.map((f) => <option key={f.id} value={f.id}>{f.departments[0]}</option>)}
@@ -508,7 +516,7 @@ export default function UniversityProfilePage() {
                         <select
                           value={programTuitionFilter}
                           onChange={(e) => setProgramTuitionFilter(e.target.value)}
-                          className="input-sm min-w-[160px]"
+                          className="input-sm w-full min-w-0"
                         >
                           <option value="all">All Tuition</option>
                           <option value="under8">Under ৳8L</option>
@@ -518,7 +526,7 @@ export default function UniversityProfilePage() {
                         <select
                           value={programDurationFilter}
                           onChange={(e) => setProgramDurationFilter(e.target.value)}
-                          className="input-sm min-w-[140px]"
+                          className="input-sm w-full min-w-0"
                         >
                           <option value="all">All Durations</option>
                           <option value="4">4 Years</option>
@@ -527,7 +535,7 @@ export default function UniversityProfilePage() {
                         <select
                           value={programScholarshipFilter}
                           onChange={(e) => setProgramScholarshipFilter(e.target.value)}
-                          className="input-sm min-w-[150px]"
+                          className="input-sm w-full min-w-0"
                         >
                           <option value="all">All</option>
                           <option value="yes">Scholarship</option>
@@ -536,7 +544,7 @@ export default function UniversityProfilePage() {
                         <select
                           value={programSort}
                           onChange={(e) => setProgramSort(e.target.value)}
-                          className="input-sm min-w-[180px]"
+                          className="input-sm w-full min-w-0 sm:col-span-2 md:col-span-1"
                         >
                           <option value="popularity">Sort: Popularity</option>
                           <option value="tuition_asc">Tuition: Low to High</option>

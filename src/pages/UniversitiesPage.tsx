@@ -40,8 +40,8 @@ export default function UniversitiesPage() {
   return (
     <div className="container-page py-10">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-ink-900">Private Universities in Bangladesh</h1>
-        <p className="text-ink-500 mt-2">Browse and compare {universities.length}+ private universities. Filter by location, program, tuition, and more.</p>
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-ink-900">Private Universities in Bangladesh</h1>
+        <p className="text-xs sm:text-sm text-ink-500 mt-2">Browse and compare {universities.length}+ private universities. Filter by location, program, tuition, and more.</p>
       </div>
 
       {/* Search + sort bar */}
@@ -59,16 +59,16 @@ export default function UniversitiesPage() {
         </div>
 
         {/* Filters */}
-        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          <select value={division} onChange={(e) => setDivision(e.target.value)} className="input text-sm">
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <select value={division} onChange={(e) => setDivision(e.target.value)} className="input text-sm w-full min-w-0">
             <option value="">All Divisions</option>
             {divisions.map((d) => <option key={d}>{d}</option>)}
           </select>
-          <select value={program} onChange={(e) => setProgram(e.target.value)} className="input text-sm">
+          <select value={program} onChange={(e) => setProgram(e.target.value)} className="input text-sm w-full min-w-0">
             <option value="">Any Program</option>
             {programs.map((p) => <option key={p.id} value={p.name.split(' ')[0]}>{p.name}</option>)}
           </select>
-          <select value={tuitionMax} onChange={(e) => setTuitionMax(Number(e.target.value))} className="input text-sm">
+          <select value={tuitionMax} onChange={(e) => setTuitionMax(Number(e.target.value))} className="input text-sm w-full min-w-0 sm:col-span-2 lg:col-span-1">
             <option value={0}>Any Tuition</option>
             <option value={500000}>Under ৳5L</option>
             <option value={800000}>Under ৳8L</option>

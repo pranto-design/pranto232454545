@@ -5,9 +5,9 @@ import CompareBar from '@/components/CompareBar';
 
 export default function Layout() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col w-full" style={{ maxWidth: '100%', overflowX: 'clip' }}>
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 w-full" style={{ maxWidth: '100%', overflowX: 'clip' }}>
         <Outlet />
       </main>
       <Footer />
