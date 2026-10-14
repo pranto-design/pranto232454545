@@ -759,6 +759,8 @@ export default function HomePage() {
         </div>
       </section>
 
+
+
       {/* ===== CTA ===== */}
       <section className="container-page py-20">
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-navy-800 via-brand-800 to-navy-900 text-white p-10 lg:p-16 text-center">

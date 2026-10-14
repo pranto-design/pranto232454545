@@ -54,13 +54,16 @@ export default function UniversityCommunityPage() {
 
       <div className="container-page py-8">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-          <div className="flex gap-1">
-            {subTabs.map((t) => (
-              <button key={t.id} onClick={() => setTab(t.id)} className={`tab ${tab === t.id ? 'tab-active' : ''}`}>{t.label}</button>
-            ))}
+          <div className="overflow-x-auto">
+            <div className="flex gap-1 flex-nowrap min-w-max">
+              {subTabs.map((t) => (
+                <button key={t.id} onClick={() => setTab(t.id)} className={`tab ${tab === t.id ? 'tab-active' : ''}`}>{t.label}</button>
+              ))}
+            </div>
           </div>
           <button className="btn-primary text-sm"><Plus size={15} /> Ask a Question</button>
         </div>
+
 
         {tab === 'discussions' && (
           <div className="space-y-4">

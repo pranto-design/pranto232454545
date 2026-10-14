@@ -664,6 +664,7 @@ function SubjectComparisonView() {
         </div>
       </div>
 
+
       {/* The Table */}
       <div className="card overflow-hidden !p-0 border border-ink-200 shadow-sm rounded-2xl">
         <div className="p-5 sm:p-6 border-b border-ink-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white">

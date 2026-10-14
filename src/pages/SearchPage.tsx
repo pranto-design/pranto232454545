@@ -48,13 +48,16 @@ export default function SearchPage() {
       {q && (
         <>
           <p className="text-sm text-ink-500 mb-4">{total} results for "<strong className="text-ink-800">{q}</strong>"</p>
-          <div className="flex gap-2 overflow-x-auto no-scrollbar mb-6 pb-1">
-            {tabs.map((t) => (
-              <button key={t.id} onClick={() => setActiveTab(t.id)} className={`chip whitespace-nowrap ${activeTab === t.id ? 'bg-brand-600 text-white border-brand-600' : 'chip-muted hover:bg-ink-200'}`}>
-                <t.icon size={13} /> {t.label} ({t.count})
-              </button>
-            ))}
+          <div className="-mx-4 px-4 overflow-x-auto no-scrollbar mb-6 pb-1">
+            <div className="flex gap-2 flex-nowrap w-max">
+              {tabs.map((t) => (
+                <button key={t.id} onClick={() => setActiveTab(t.id)} className={`chip whitespace-nowrap flex-shrink-0 ${activeTab === t.id ? 'bg-brand-600 text-white border-brand-600' : 'chip-muted hover:bg-ink-200'}`}>
+                  <t.icon size={13} /> {t.label} ({t.count})
+                </button>
+              ))}
+            </div>
           </div>
+
 
           <div className="space-y-8">
             {show('universities') && results.universities.length > 0 && (

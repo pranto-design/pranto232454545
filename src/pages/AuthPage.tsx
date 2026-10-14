@@ -28,11 +28,10 @@ export default function AuthPage({ mode }: { mode: 'login' | 'signup' }) {
 
         <form onSubmit={handleSubmit} className="card p-6 space-y-4">
           {!isLogin && (
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {[
                 { id: 'student', label: 'Student' },
                 { id: 'alumni', label: 'Alumni' },
-                { id: 'rep', label: 'Rep' },
               ].map((t) => (
                 <button
                   key={t.id}
@@ -83,13 +82,7 @@ export default function AuthPage({ mode }: { mode: 'login' | 'signup' }) {
                   <input className="input pl-9" placeholder="University" />
                 </div>
               </div>
-              <div>
-                <label className="text-xs font-medium text-ink-600 mb-1 block">Graduation Year</label>
-                <div className="relative">
-                  <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" />
-                  <input type="number" className="input pl-9" placeholder="2027" />
-                </div>
-              </div>
+
             </div>
           )}
 
