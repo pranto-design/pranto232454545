@@ -392,10 +392,38 @@ export default function UniversityProfilePage() {
                                 {fac.departments.map((deptName, di) => {
                                   const offering = offerings.find((o) => {
                                     const prog = getProgramById(o.programId);
+                                    if (!prog) return false;
+                                    const d = deptName.toLowerCase().trim();
+                                    const pName = prog.name.toLowerCase().trim();
+                                    const pSlug = prog.slug.toLowerCase().trim();
                                     return (
-                                      prog?.name.toLowerCase().includes(deptName.toLowerCase()) ||
-                                      prog?.slug.toLowerCase() === deptName.toLowerCase() ||
-                                      deptName.toLowerCase().includes(prog?.slug.toLowerCase() || '')
+                                      pName === d ||
+                                      pSlug === d ||
+                                      pName.includes(d) ||
+                                      d.includes(pName) ||
+                                      d.includes(pSlug) ||
+                                      (d === 'law' && pSlug === 'law') ||
+                                      (d === 'llb' && pSlug === 'law') ||
+                                      (d === 'cse' && pSlug === 'cse') ||
+                                      (d === 'eee' && pSlug === 'eee') ||
+                                      (d === 'ece' && pSlug === 'ece') ||
+                                      (d === 'bba' && pSlug === 'bba') ||
+                                      (d === 'architecture' && pSlug === 'architecture') ||
+                                      (d === 'pharmacy' && pSlug === 'pharmacy') ||
+                                      (d === 'english' && pSlug === 'english') ||
+                                      (d === 'economics' && pSlug === 'economics') ||
+                                      (d === 'microbiology' && pSlug === 'microbiology') ||
+                                      (d === 'anthropology' && pSlug === 'anthropology') ||
+                                      (d === 'biotechnology' && pSlug === 'biotechnology') ||
+                                      (d === 'mathematics' && pSlug === 'mathematics') ||
+                                      (d === 'physics' && pSlug === 'physics') ||
+                                      (d.includes('applied physics') && pSlug === 'ape') ||
+                                      (d === 'ape' && pSlug === 'ape') ||
+                                      (d.includes('media') && pSlug === 'journalism') ||
+                                      (d.includes('communication') && pSlug === 'journalism') ||
+                                      (d.includes('environmental') && pSlug === 'environmental-science') ||
+                                      (d.includes('biochemistry') && pSlug === 'biochemistry') ||
+                                      (d === 'ete' && pSlug === 'ece')
                                     );
                                   });
 
@@ -446,15 +474,8 @@ export default function UniversityProfilePage() {
                                     );
                                   }
 
-                                  return (
-                                    <Link key={deptName} to="/programs" className="p-5 rounded-2xl bg-ink-50/50 border border-dashed border-ink-200 hover:border-primary-300 hover:bg-primary-50/20 transition-all block cursor-pointer group">
-                                      <div className="h-9 w-9 rounded-xl bg-white border border-ink-100 flex items-center justify-center text-ink-400 group-hover:text-primary-600 mb-3 transition-colors">
-                                        <BookMarked size={16} />
-                                      </div>
-                                      <p className="font-semibold text-ink-700 group-hover:text-primary-700 text-sm transition-colors">{deptName}</p>
-                                      <p className="text-[11px] text-primary-600 font-medium mt-1">Explore Programs →</p>
-                                    </Link>
-                                  );
+                                  // Like AIUB: unavailable/placeholder programs without offerings should not be displayed
+                                  return null;
                                 })}
                               </div>
                             </div>
@@ -1772,26 +1793,6 @@ export default function UniversityProfilePage() {
                   );
                 })()}
 
-                {/* Estimated Cost Card */}
-                <div className="card p-6 bg-gradient-to-br from-primary-50 via-white to-blueSaaS-50 border-primary-100">
-                  <div className="flex items-center gap-2 mb-4">
-                    <CircleDollarSign size={18} className="text-primary-600" />
-                    <h3 className="text-base font-bold text-ink-900">Est. Yearly Cost</h3>
-                  </div>
-                  <div className="mb-4">
-                    <p className="text-3xl font-black text-ink-900 leading-none bg-gradient-to-r from-primary-700 to-blueSaaS-700 bg-clip-text text-transparent inline-block">
-                      ৳{Math.round(((uni.tuitionMin + uni.tuitionMax) / 2) / 4).toLocaleString('en-BD')}
-                    </p>
-                    <p className="text-xs text-ink-500 mt-1.5 font-medium">Per year, estimated</p>
-                  </div>
-                  <div className="h-2 w-full rounded-full bg-white border border-borderLine overflow-hidden mb-3">
-                    <div className="h-full w-2/3 bg-gradient-to-r from-primary-500 to-emeraldAccent-500 rounded-full" />
-                  </div>
-                  <div className="flex items-center justify-between text-[11px] font-semibold text-ink-500">
-                    <span>Low: ৳{Math.round(uni.tuitionMin / 4).toLocaleString('en-BD')}</span>
-                    <span>High: ৳{Math.round(uni.tuitionMax / 4).toLocaleString('en-BD')}</span>
-                  </div>
-                </div>
 
                 {/* Quick Links */}
                 <div className="card p-5">
