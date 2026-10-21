@@ -16,9 +16,8 @@ const footerLinks = {
     { label: 'Ask a Question', to: '/community' },
   ],
   'For Universities': [
-    { label: 'Claim Your University', to: '/rep-portal' },
     { label: 'Advertise With Us', to: '/advertise' },
-    { label: 'Submit Information', to: '/submit-info' },
+    { label: 'Submit University Info', to: '/submit-information' },
   ],
   Company: [
     { label: 'About Us', to: '/about' },

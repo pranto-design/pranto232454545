@@ -20,6 +20,8 @@ import SearchPage from '@/pages/SearchPage';
 import AuthPage from '@/pages/AuthPage';
 import AdminPage from '@/pages/AdminPage';
 import RepPortalPage from '@/pages/RepPortalPage';
+import AdvertisePage from '@/pages/AdvertisePage';
+import SubmitInformationPage from '@/pages/SubmitInformationPage';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -48,6 +50,8 @@ export default function App() {
                 <Route path="/admission" element={<AdmissionPage />} />
                 <Route path="/scholarships" element={<ScholarshipsPage />} />
                 <Route path="/search" element={<SearchPage />} />
+                <Route path="/advertise" element={<AdvertisePage />} />
+                <Route path="/submit-information" element={<SubmitInformationPage />} />
               </Route>
               <Route path="/login" element={<AuthPage mode="login" />} />
               <Route path="/signup" element={<AuthPage mode="signup" />} />
