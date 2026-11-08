@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import {
@@ -25,6 +25,7 @@ import {
   getScholarshipsByUniversity, getNoticesByUniversity, getPostsByUniversity,
   getProgramById, formatBDT, formatBDTFull, universities,
 } from '@/data/sampleData';
+import { universityCmsService, ExtendedUniversityData } from '@/services/universityCmsService';
 import {
   RatingStars, VerificationBadge, CompareButton, SaveButton, EmptyState,
 } from '@/components/ui';
@@ -140,7 +141,75 @@ export default function UniversityProfilePage() {
   const [programSort, setProgramSort] = useState('popularity');
   const [faqOpen, setFaqOpen] = useState<number | null>(0);
 
-  const uni = slug ? getUniversity(slug) : undefined;
+  const sampleUni = slug ? getUniversity(slug) : undefined;
+  const [liveUni, setLiveUni] = useState<ExtendedUniversityData | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadLiveData() {
+      if (!slug) return;
+      try {
+        const data = await universityCmsService.getUniversityBySlugOrId(slug);
+        if (data && isMounted) {
+          setLiveUni(data);
+        }
+      } catch (err) {
+        console.warn('Error fetching dynamic university CMS data:', err);
+      }
+    }
+    loadLiveData();
+
+    const handleCmsUpdate = (e: Event) => {
+      loadLiveData();
+    };
+
+    window.addEventListener('univara_cms_updated', handleCmsUpdate);
+    window.addEventListener('storage', handleCmsUpdate);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('univara_cms_updated', handleCmsUpdate);
+      window.removeEventListener('storage', handleCmsUpdate);
+    };
+  }, [slug]);
+
+  // Merge live database/CMS fields over sample baseline (preserves all fallbacks)
+  const uni = useMemo(() => {
+    if (!liveUni && !sampleUni) return undefined;
+    if (!liveUni) return sampleUni;
+    if (!sampleUni) return liveUni;
+
+    return {
+      ...sampleUni,
+      ...liveUni,
+      name: liveUni.name || sampleUni.name,
+      shortName: liveUni.shortName || sampleUni.shortName,
+      location: liveUni.location || sampleUni.location,
+      division: liveUni.division || sampleUni.division,
+      established: liveUni.established || sampleUni.established,
+      website: liveUni.website || sampleUni.website,
+      email: liveUni.email || sampleUni.email,
+      phone: liveUni.phone || sampleUni.phone,
+      address: liveUni.address || sampleUni.address,
+      description: liveUni.description || sampleUni.description,
+      campusInfo: liveUni.campusInfo || sampleUni.campusInfo,
+      accreditation: liveUni.accreditation || sampleUni.accreditation,
+      // If live faculties array is defined and edited (even if empty or modified), respect live value
+      facilities: liveUni.facilities !== undefined ? liveUni.facilities : sampleUni.facilities,
+      admissionTestRequired: liveUni.admissionTestRequired ?? sampleUni.admissionTestRequired,
+      minGPA: liveUni.minGPA ?? sampleUni.minGPA,
+      rating: liveUni.rating ?? sampleUni.rating,
+      reviewCount: liveUni.reviewCount ?? sampleUni.reviewCount,
+      tuitionMin: liveUni.tuitionMin ?? sampleUni.tuitionMin,
+      tuitionMax: liveUni.tuitionMax ?? sampleUni.tuitionMax,
+      programCount: liveUni.programCount ?? sampleUni.programCount,
+      // If live faculties array is defined, respect it completely (including removed faculties/departments)
+      faculties: liveUni.faculties !== undefined ? liveUni.faculties : sampleUni.faculties,
+      source: liveUni.source || sampleUni.source,
+      logoUrl: liveUni.logoUrl || '',
+      coverPhotoUrl: liveUni.coverPhotoUrl || '',
+    };
+  }, [liveUni, sampleUni]);
   const offerings = useMemo(() => (uni ? getOfferingsByUniversity(uni.id) : []), [uni]);
   const uniReviews = useMemo(() => (uni ? getReviewsByUniversity(uni.id) : []), [uni]);
   const uniScholarships = useMemo(() => (uni ? getScholarshipsByUniversity(uni.id) : []), [uni]);
@@ -236,7 +305,7 @@ export default function UniversityProfilePage() {
       <section className="relative overflow-hidden bg-navy-950">
         <div className="absolute inset-0 pointer-events-none">
           <img
-            src={`https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${encodeURIComponent(`modern university campus building with glass facade, green courtyard, students walking, professional photography, golden hour lighting, wide angle, hyperrealistic`)}&image_size=landscape_16_9`}
+            src={uni.coverPhotoUrl || `https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${encodeURIComponent(`modern university campus building with glass facade, green courtyard, students walking, professional photography, golden hour lighting, wide angle, hyperrealistic`)}&image_size=landscape_16_9`}
             alt={`${uni.name} campus`}
             className="w-full h-full object-cover"
             onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
@@ -257,9 +326,13 @@ export default function UniversityProfilePage() {
                     initial={{ scale: 0.85, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.5, delay: 0.1, type: 'spring', stiffness: 200 }}
-                    className={`h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 rounded-2xl bg-gradient-to-br ${uni.logoColor} text-white flex items-center justify-center font-bold text-lg sm:text-xl lg:text-2xl font-display shadow-[0_20px_50px_-12px_rgba(0,0,0,0.4)] ring-4 ring-white/10`}
+                    className={`h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 rounded-2xl bg-gradient-to-br ${uni.logoColor} text-white flex items-center justify-center font-bold text-lg sm:text-xl lg:text-2xl font-display shadow-[0_20px_50px_-12px_rgba(0,0,0,0.4)] ring-4 ring-white/10 overflow-hidden`}
                   >
-                    {uni.logoInitials}
+                    {uni.logoUrl ? (
+                      <img src={uni.logoUrl} alt={uni.name} className="w-full h-full object-contain p-1.5" />
+                    ) : (
+                      uni.logoInitials
+                    )}
                   </motion.div>
                 </div>
 
@@ -369,119 +442,110 @@ export default function UniversityProfilePage() {
                     </div>
 
                     <div className="space-y-8">
-                      {uni.faculties.map((fac, fi) => {
-                        const FacultyIcon: LucideIcon = fi === 0 ? Cpu : fi === 1 ? Briefcase : fi === 2 ? Languages : fi === 3 ? Microscope : BookOpen;
-                        return (
-                          <motion.div key={fac.id} variants={fadeUp} custom={fi} className="card p-6 sm:p-8 overflow-hidden relative">
-                            <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-gradient-to-br from-primary-50 to-emeraldAccent-50 opacity-60" />
-                            <div className="relative">
-                              <div className="flex items-start gap-4 mb-6">
-                                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary-500 to-emeraldAccent-500 text-white flex items-center justify-center shrink-0 shadow-[0_12px_24px_-8px_rgba(15,118,110,0.4)]">
-                                  <FacultyIcon size={26} strokeWidth={2} />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <span className="chip-primary">Faculty {fi + 1}</span>
-                                    <span className="chip-muted">{fac.departments.length} Departments</span>
+                      {uni.faculties && uni.faculties.length > 0 ? (
+                        uni.faculties.map((fac, fi) => {
+                          const FacultyIcon: LucideIcon = fi === 0 ? Cpu : fi === 1 ? Briefcase : fi === 2 ? Languages : fi === 3 ? Microscope : BookOpen;
+                          return (
+                            <motion.div key={fac.id || fi} variants={fadeUp} custom={fi} className="card p-6 sm:p-8 overflow-hidden relative">
+                              <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-gradient-to-br from-primary-50 to-emeraldAccent-50 opacity-60" />
+                              <div className="relative">
+                                <div className="flex items-start gap-4 mb-6">
+                                  <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary-500 to-emeraldAccent-500 text-white flex items-center justify-center shrink-0 shadow-[0_12px_24px_-8px_rgba(15,118,110,0.4)]">
+                                    <FacultyIcon size={26} strokeWidth={2} />
                                   </div>
-                                  <h3 className="text-xl font-bold tracking-tight text-ink-900 mt-2">{fac.name}</h3>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <span className="chip-primary">Faculty {fi + 1}</span>
+                                      <span className="chip-muted">{fac.departments?.length || 0} Departments</span>
+                                    </div>
+                                    <h3 className="text-xl font-bold tracking-tight text-ink-900 mt-2">{fac.name}</h3>
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                  {fac.departments && fac.departments.length > 0 ? (
+                                    fac.departments.map((deptName, di) => {
+                                      const offering = offerings.find((o) => {
+                                        const prog = getProgramById(o.programId);
+                                        return (
+                                          prog?.name.toLowerCase().includes(deptName.toLowerCase()) ||
+                                          prog?.slug.toLowerCase() === deptName.toLowerCase() ||
+                                          deptName.toLowerCase().includes(prog?.slug.toLowerCase() || '')
+                                        );
+                                      });
+
+                                      if (offering) {
+                                        const prog = getProgramById(offering.programId);
+                                        const progSlug = prog?.slug || 'cse';
+                                        return (
+                                          <Link
+                                            key={`${deptName}-${di}`}
+                                            to={`/programs/${progSlug}`}
+                                            className="group relative p-5 rounded-2xl bg-white border border-borderLine hover:border-primary-200 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 overflow-hidden block cursor-pointer"
+                                          >
+                                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary-50 via-primary-50 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                            <div className="relative z-10">
+                                              <div className="flex items-start justify-between gap-3 mb-4">
+                                                <h4 className="font-bold text-ink-900 text-base leading-snug group-hover:text-primary-700 transition-colors">
+                                                  {prog?.name || deptName}
+                                                </h4>
+                                                <span className="shrink-0 text-xs font-black text-primary-700 bg-gradient-to-br from-primary-50 to-emeraldAccent-50 px-2.5 py-1.5 rounded-xl border border-primary-100 shadow-sm">
+                                                  {formatBDT(offering.totalTuitionEstimate)}
+                                                </span>
+                                              </div>
+                                              <div className="grid grid-cols-2 gap-2.5 mb-4">
+                                                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-ink-50/70 border border-ink-100/60">
+                                                  <BookOpen size={13} className="text-primary-600" strokeWidth={2.3} />
+                                                  <div className="min-w-0">
+                                                    <p className="text-[9px] font-bold uppercase tracking-wide text-ink-400 leading-none">Credits</p>
+                                                    <p className="text-xs font-bold text-ink-900">{offering.totalCredits}</p>
+                                                  </div>
+                                                </div>
+                                                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-ink-50/70 border border-ink-100/60">
+                                                  <Clock size={13} className="text-blueSaaS-600" strokeWidth={2.3} />
+                                                  <div className="min-w-0">
+                                                    <p className="text-[9px] font-bold uppercase tracking-wide text-ink-400 leading-none">Duration</p>
+                                                    <p className="text-xs font-bold text-ink-900">{offering.durationYears} Yrs</p>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div className="flex flex-wrap gap-1.5">
+                                                {offering.admissionRequirements.slice(0, 3).map((r) => (
+                                                  <span key={r} className="px-2.5 py-1 bg-ink-50 border border-ink-200/70 rounded-lg text-[10px] font-semibold text-ink-600">
+                                                    {r}
+                                                  </span>
+                                                ))}
+                                              </div>
+                                            </div>
+                                          </Link>
+                                        );
+                                      }
+
+                                      return (
+                                        <Link key={`${deptName}-${di}`} to="/programs" className="p-5 rounded-2xl bg-ink-50/50 border border-dashed border-ink-200 hover:border-primary-300 hover:bg-primary-50/20 transition-all block cursor-pointer group">
+                                          <div className="h-9 w-9 rounded-xl bg-white border border-ink-100 flex items-center justify-center text-ink-400 group-hover:text-primary-600 mb-3 transition-colors">
+                                            <BookMarked size={16} />
+                                          </div>
+                                          <p className="font-semibold text-ink-700 group-hover:text-primary-700 text-sm transition-colors">{deptName}</p>
+                                          <p className="text-[11px] text-primary-600 font-medium mt-1">Explore Programs →</p>
+                                        </Link>
+                                      );
+                                    })
+                                  ) : (
+                                    <div className="col-span-full p-4 rounded-xl border border-dashed border-ink-200 text-xs text-ink-400 text-center">
+                                      No departments added under this faculty yet.
+                                    </div>
+                                  )}
                                 </div>
                               </div>
-
-                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {fac.departments.map((deptName, di) => {
-                                  const offering = offerings.find((o) => {
-                                    const prog = getProgramById(o.programId);
-                                    if (!prog) return false;
-                                    const d = deptName.toLowerCase().trim();
-                                    const pName = prog.name.toLowerCase().trim();
-                                    const pSlug = prog.slug.toLowerCase().trim();
-                                    return (
-                                      pName === d ||
-                                      pSlug === d ||
-                                      pName.includes(d) ||
-                                      d.includes(pName) ||
-                                      d.includes(pSlug) ||
-                                      (d === 'law' && pSlug === 'law') ||
-                                      (d === 'llb' && pSlug === 'law') ||
-                                      (d === 'cse' && pSlug === 'cse') ||
-                                      (d === 'eee' && pSlug === 'eee') ||
-                                      (d === 'ece' && pSlug === 'ece') ||
-                                      (d === 'bba' && pSlug === 'bba') ||
-                                      (d === 'architecture' && pSlug === 'architecture') ||
-                                      (d === 'pharmacy' && pSlug === 'pharmacy') ||
-                                      (d === 'english' && pSlug === 'english') ||
-                                      (d === 'economics' && pSlug === 'economics') ||
-                                      (d === 'microbiology' && pSlug === 'microbiology') ||
-                                      (d === 'anthropology' && pSlug === 'anthropology') ||
-                                      (d === 'biotechnology' && pSlug === 'biotechnology') ||
-                                      (d === 'mathematics' && pSlug === 'mathematics') ||
-                                      (d === 'physics' && pSlug === 'physics') ||
-                                      (d.includes('applied physics') && pSlug === 'ape') ||
-                                      (d === 'ape' && pSlug === 'ape') ||
-                                      (d.includes('media') && pSlug === 'journalism') ||
-                                      (d.includes('communication') && pSlug === 'journalism') ||
-                                      (d.includes('environmental') && pSlug === 'environmental-science') ||
-                                      (d.includes('biochemistry') && pSlug === 'biochemistry') ||
-                                      (d === 'ete' && pSlug === 'ece')
-                                    );
-                                  });
-
-                                  if (offering) {
-                                    const prog = getProgramById(offering.programId);
-                                    const progSlug = prog?.slug || 'cse';
-                                    return (
-                                      <Link
-                                        key={deptName}
-                                        to={`/programs/${progSlug}`}
-                                        className="group relative p-5 rounded-2xl bg-white border border-borderLine hover:border-primary-200 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 overflow-hidden block cursor-pointer"
-                                      >
-                                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary-50 via-primary-50 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                        <div className="relative z-10">
-                                          <div className="flex items-start justify-between gap-3 mb-4">
-                                            <h4 className="font-bold text-ink-900 text-base leading-snug group-hover:text-primary-700 transition-colors">
-                                              {prog?.name || deptName}
-                                            </h4>
-                                            <span className="shrink-0 text-xs font-black text-primary-700 bg-gradient-to-br from-primary-50 to-emeraldAccent-50 px-2.5 py-1.5 rounded-xl border border-primary-100 shadow-sm">
-                                              {formatBDT(offering.totalTuitionEstimate)}
-                                            </span>
-                                          </div>
-                                          <div className="grid grid-cols-2 gap-2.5 mb-4">
-                                            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-ink-50/70 border border-ink-100/60">
-                                              <BookOpen size={13} className="text-primary-600" strokeWidth={2.3} />
-                                              <div className="min-w-0">
-                                                <p className="text-[9px] font-bold uppercase tracking-wide text-ink-400 leading-none">Credits</p>
-                                                <p className="text-xs font-bold text-ink-900">{offering.totalCredits}</p>
-                                              </div>
-                                            </div>
-                                            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-ink-50/70 border border-ink-100/60">
-                                              <Clock size={13} className="text-blueSaaS-600" strokeWidth={2.3} />
-                                              <div className="min-w-0">
-                                                <p className="text-[9px] font-bold uppercase tracking-wide text-ink-400 leading-none">Duration</p>
-                                                <p className="text-xs font-bold text-ink-900">{offering.durationYears} Yrs</p>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div className="flex flex-wrap gap-1.5">
-                                            {offering.admissionRequirements.slice(0, 3).map((r) => (
-                                              <span key={r} className="px-2.5 py-1 bg-ink-50 border border-ink-200/70 rounded-lg text-[10px] font-semibold text-ink-600">
-                                                {r}
-                                              </span>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      </Link>
-                                    );
-                                  }
-
-                                  // Like AIUB: unavailable/placeholder programs without offerings should not be displayed
-                                  return null;
-                                })}
-                              </div>
-                            </div>
-                          </motion.div>
-                        );
-                      })}
+                            </motion.div>
+                          );
+                        })
+                      ) : (
+                        <div className="card p-8 text-center text-ink-400 border border-dashed border-ink-200">
+                          No faculties or departments currently listed for this university.
+                        </div>
+                      )}
                     </div>
                   </motion.section>
 
@@ -502,7 +566,7 @@ export default function UniversityProfilePage() {
                     <span className="section-eyebrow"><GraduationCap size={14} /> Academic Offerings</span>
                     <h2 className="section-title text-3xl sm:text-4xl">Programs at {uni.name}</h2>
                     <p className="section-sub max-w-2xl text-lg mt-3">
-                      {offerings.length} undergraduate programs across {uni.faculties.length} faculties — find the path that's right for you.
+                      {offerings.length} undergraduate programs across {uni.faculties?.length || 0} faculties — find the path that's right for you.
                     </p>
                   </div>
 
@@ -532,7 +596,11 @@ export default function UniversityProfilePage() {
                           className="input-sm w-full min-w-0"
                         >
                           <option value="all">All Departments</option>
-                          {uni.faculties.map((f) => <option key={f.id} value={f.id}>{f.departments[0]}</option>)}
+                          {uni.faculties?.map((f) => (
+                            <option key={f.id} value={f.id}>
+                              {f.name}
+                            </option>
+                          ))}
                         </select>
                         <select
                           value={programTuitionFilter}
@@ -1793,6 +1861,26 @@ export default function UniversityProfilePage() {
                   );
                 })()}
 
+                {/* Estimated Cost Card */}
+                <div className="card p-6 bg-gradient-to-br from-primary-50 via-white to-blueSaaS-50 border-primary-100">
+                  <div className="flex items-center gap-2 mb-4">
+                    <CircleDollarSign size={18} className="text-primary-600" />
+                    <h3 className="text-base font-bold text-ink-900">Est. Yearly Cost</h3>
+                  </div>
+                  <div className="mb-4">
+                    <p className="text-3xl font-black text-ink-900 leading-none bg-gradient-to-r from-primary-700 to-blueSaaS-700 bg-clip-text text-transparent inline-block">
+                      ৳{Math.round(((uni.tuitionMin + uni.tuitionMax) / 2) / 4).toLocaleString('en-BD')}
+                    </p>
+                    <p className="text-xs text-ink-500 mt-1.5 font-medium">Per year, estimated</p>
+                  </div>
+                  <div className="h-2 w-full rounded-full bg-white border border-borderLine overflow-hidden mb-3">
+                    <div className="h-full w-2/3 bg-gradient-to-r from-primary-500 to-emeraldAccent-500 rounded-full" />
+                  </div>
+                  <div className="flex items-center justify-between text-[11px] font-semibold text-ink-500">
+                    <span>Low: ৳{Math.round(uni.tuitionMin / 4).toLocaleString('en-BD')}</span>
+                    <span>High: ৳{Math.round(uni.tuitionMax / 4).toLocaleString('en-BD')}</span>
+                  </div>
+                </div>
 
                 {/* Quick Links */}
                 <div className="card p-5">

@@ -1,15 +1,44 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Bell, Calendar, ExternalLink, Filter, AlertCircle } from 'lucide-react';
-import { admissionNotices, universities, getUniversityById } from '@/data/sampleData';
+import { admissionNotices as sampleNotices, universities, getUniversityById } from '@/data/sampleData';
+// Note: `admissionNotices` alias above is used as initial state; `noticesList` is the live reactive state
 import { UniversityLogo, VerificationBadge, EmptyState } from '@/components/ui';
+import { universityCmsService } from '@/services/universityCmsService';
+import type { AdmissionNotice } from '@/types';
 
 export default function AdmissionPage() {
   const [uniFilter, setUniFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('');
+  const [noticesList, setNoticesList] = useState<AdmissionNotice[]>(sampleNotices);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadNotices() {
+      try {
+        const live = await universityCmsService.getAdmissionNotices();
+        if (live && live.length > 0 && isMounted) {
+          setNoticesList(live);
+        }
+      } catch (err) {
+        console.warn('Error loading dynamic admission notices:', err);
+      }
+    }
+    loadNotices();
+
+    const handleUpdate = () => loadNotices();
+    window.addEventListener('univara_cms_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('univara_cms_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
 
   const filtered = useMemo(() => {
-    let list = [...admissionNotices];
+    let list = [...noticesList];
     if (uniFilter) list = list.filter((n) => n.universityId === uniFilter);
     if (dateFilter) {
       const now = new Date('2026-07-26');
@@ -21,7 +50,7 @@ export default function AdmissionPage() {
       });
     }
     return list.sort((a, b) => a.deadline.localeCompare(b.deadline));
-  }, [uniFilter, dateFilter]);
+  }, [uniFilter, dateFilter, noticesList]);
 
   return (
     <div className="container-page py-10">
@@ -36,7 +65,7 @@ export default function AdmissionPage() {
       <div className="card p-5 mb-6">
         <h3 className="font-semibold mb-3 flex items-center gap-2"><Calendar size={18} className="text-brand-600" /> Upcoming Deadlines</h3>
         <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
-          {admissionNotices.slice(0, 6).map((n) => {
+          {noticesList.slice(0, 6).map((n) => {
             const uni = getUniversityById(n.universityId);
             if (!uni) return null;
             const daysLeft = Math.ceil((new Date(n.deadline).getTime() - new Date('2026-07-26').getTime()) / 86400000);

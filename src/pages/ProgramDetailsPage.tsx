@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   BookOpen, Briefcase, GraduationCap, Award, ArrowRight, CheckCircle2,
+  ChevronDown, ChevronUp, ExternalLink, Receipt, Info, Building2
 } from 'lucide-react';
 import {
   getProgram, getOfferingsByProgram, getUniversityById, formatBDT, formatBDTFull, programs,
@@ -14,6 +15,21 @@ export default function ProgramDetailsPage() {
   const [showLead, setShowLead] = useState(false);
   const program = slug ? getProgram(slug) : undefined;
 
+  const offerings = program ? getOfferingsByProgram(program.id) : [];
+  const sorted = [...offerings].sort((a, b) => a.totalTuitionEstimate - b.totalTuitionEstimate);
+  const cheapest = sorted[0];
+
+  const [expandedOfferings, setExpandedOfferings] = useState<Record<string, boolean>>(() => {
+    return sorted[0] ? { [sorted[0].id]: true } : {};
+  });
+
+  const toggleOffering = (id: string) => {
+    setExpandedOfferings(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
   if (!program) {
     return (
       <div className="container-page py-20">
@@ -24,10 +40,6 @@ export default function ProgramDetailsPage() {
       </div>
     );
   }
-
-  const offerings = getOfferingsByProgram(program.id);
-  const sorted = [...offerings].sort((a, b) => a.totalTuitionEstimate - b.totalTuitionEstimate);
-  const cheapest = sorted[0];
 
   return (
     <div className="w-full max-w-full overflow-x-hidden">
@@ -204,6 +216,225 @@ export default function ProgramDetailsPage() {
                   })}
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          {/* Detailed Subject & Fee Breakdown per University (Exact Layout from Reference Image) */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-base sm:text-xl font-bold text-ink-900 flex items-center gap-2">
+                  <Receipt size={20} className="text-brand-600 shrink-0" />
+                  <span>Itemized Fee Breakdown by University</span>
+                </h2>
+                <p className="text-xs text-ink-500 mt-0.5">
+                  Complete breakdown of tuition, admission, term charges, and lab fees per university
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {offerings.map((o) => {
+                const uni = getUniversityById(o.universityId);
+                if (!uni) return null;
+                const isExpanded = !!expandedOfferings[o.id];
+                const isCheapest = cheapest && o.id === cheapest.id;
+
+                const admissionFee = o.admissionFee || 25000;
+                const verificationFee = o.otherFees || 2000;
+                const termActivityFee = o.semesterFee || 12500;
+                const labFee = o.labFee || 2500;
+                const computedTotal = o.totalTuitionEstimate;
+
+                return (
+                  <div
+                    key={o.id}
+                    className="card overflow-hidden border border-ink-200/90 shadow-sm transition-all"
+                  >
+                    {/* Collapsible Header */}
+                    <div
+                      onClick={() => toggleOffering(o.id)}
+                      className="p-4 sm:p-5 bg-white hover:bg-ink-50/50 cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-ink-100"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Link
+                            to={`/universities/${uni.slug}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center gap-1.5 font-bold text-ink-900 hover:text-brand-700"
+                          >
+                            <UniversityLogo uni={uni} size="sm" />
+                            <span>{uni.name}</span>
+                          </Link>
+                          {isCheapest && <span className="chip-emerald text-[10px]">Best Value</span>}
+                        </div>
+                        <h3 className="text-sm sm:text-base font-bold text-ink-900 mt-1">
+                          {o.degree} in {program.name}
+                        </h3>
+                        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                          <span className="text-xs text-ink-500 font-medium">Local</span>
+                          <span className="text-ink-300">•</span>
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-brand-50 text-brand-700 border border-brand-200">
+                            Per credit
+                          </span>
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-ink-100 text-ink-700 border border-ink-200">
+                            Effective: FALL_2026
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-ink-100">
+                        <div className="text-right">
+                          <span className="text-xs text-ink-500 font-medium block">Total Estimate</span>
+                          <span className="text-base sm:text-xl font-bold text-ink-900 font-display">
+                            {formatBDTFull(computedTotal)}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          className="p-1.5 rounded-lg text-ink-500 hover:bg-ink-100 hover:text-ink-800 transition"
+                          aria-label={isExpanded ? "Collapse" : "Expand"}
+                        >
+                          {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Expanded Breakdown Body */}
+                    {isExpanded && (
+                      <div className="p-4 sm:p-6 bg-white space-y-6">
+                        {/* Summary key-value rows */}
+                        <div className="divide-y divide-ink-100 text-xs sm:text-sm">
+                          <div className="py-2.5 sm:py-3 grid grid-cols-1 sm:grid-cols-4 gap-1 sm:gap-4">
+                            <span className="font-semibold text-ink-500 sm:col-span-1">Applies to</span>
+                            <span className="text-ink-800 sm:col-span-3">
+                              Incoming freshmen, transferees and readmissions from the Fall 2026-27 semester (fee page: 'Effective from FALL 2026-27 Semester')
+                            </span>
+                          </div>
+                          <div className="py-2.5 sm:py-3 grid grid-cols-1 sm:grid-cols-4 gap-1 sm:gap-4">
+                            <span className="font-semibold text-ink-500 sm:col-span-1">Per credit</span>
+                            <span className="text-ink-800 font-bold sm:col-span-3">
+                              {formatBDTFull(o.tuitionPerCredit)}
+                            </span>
+                          </div>
+                          <div className="py-2.5 sm:py-3 grid grid-cols-1 sm:grid-cols-4 gap-1 sm:gap-4">
+                            <span className="font-semibold text-ink-500 sm:col-span-1">Credits</span>
+                            <span className="text-ink-800 font-bold sm:col-span-3">
+                              {o.totalCredits}
+                            </span>
+                          </div>
+                          <div className="py-2.5 sm:py-3 grid grid-cols-1 sm:grid-cols-4 gap-1 sm:gap-4">
+                            <span className="font-semibold text-ink-500 sm:col-span-1">Admission fee</span>
+                            <span className="text-ink-800 font-bold sm:col-span-3">
+                              {formatBDTFull(admissionFee)}
+                            </span>
+                          </div>
+                          <div className="py-2.5 sm:py-3 grid grid-cols-1 sm:grid-cols-4 gap-1 sm:gap-4">
+                            <span className="font-semibold text-ink-500 sm:col-span-1">Computed total</span>
+                            <span className="text-ink-900 font-bold sm:col-span-3 text-sm sm:text-base">
+                              {formatBDTFull(computedTotal)}
+                            </span>
+                          </div>
+                          <div className="py-2.5 sm:py-3 grid grid-cols-1 sm:grid-cols-4 gap-1 sm:gap-4 items-center">
+                            <span className="font-semibold text-ink-500 sm:col-span-1">Fee page</span>
+                            <span className="sm:col-span-3">
+                              <a
+                                href={uni.website ? (uni.website.startsWith('http') ? uni.website : `https://${uni.website}`) : '#'}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-brand-600 hover:underline inline-flex items-center gap-1 font-medium"
+                              >
+                                <span>{uni.website || `www.${uni.slug}.edu/tuition-fee`}</span>
+                                <ExternalLink size={13} />
+                              </a>
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* FEE LINES Section */}
+                        <div>
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-ink-500 mb-3">
+                            Fee Lines
+                          </h4>
+                          <div className="overflow-x-auto rounded-xl border border-ink-100 bg-ink-50/30">
+                            <table className="w-full text-xs sm:text-sm">
+                              <thead>
+                                <tr className="border-b border-ink-200/80 text-left text-ink-500 font-semibold uppercase text-[11px] tracking-wider bg-ink-50/80">
+                                  <th className="py-2.5 px-3 sm:px-4">Item</th>
+                                  <th className="py-2.5 px-3 sm:px-4">Category</th>
+                                  <th className="py-2.5 px-3 sm:px-4">Amount</th>
+                                  <th className="py-2.5 px-3 sm:px-4">Frequency</th>
+                                  <th className="py-2.5 px-3 sm:px-4"></th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-ink-100">
+                                <tr>
+                                  <td className="py-2.5 px-3 sm:px-4 font-medium text-ink-800">Admission</td>
+                                  <td className="py-2.5 px-3 sm:px-4 text-ink-600">Admission</td>
+                                  <td className="py-2.5 px-3 sm:px-4 font-bold text-ink-800">{formatBDTFull(admissionFee)}</td>
+                                  <td className="py-2.5 px-3 sm:px-4 text-ink-600">One-time</td>
+                                  <td className="py-2.5 px-3 sm:px-4"></td>
+                                </tr>
+                                <tr>
+                                  <td className="py-2.5 px-3 sm:px-4 font-medium text-ink-800">Verification</td>
+                                  <td className="py-2.5 px-3 sm:px-4 text-ink-600">Verification</td>
+                                  <td className="py-2.5 px-3 sm:px-4 font-bold text-ink-800">{formatBDTFull(verificationFee)}</td>
+                                  <td className="py-2.5 px-3 sm:px-4 text-ink-600">One-time</td>
+                                  <td className="py-2.5 px-3 sm:px-4"></td>
+                                </tr>
+                                <tr>
+                                  <td className="py-2.5 px-3 sm:px-4 font-medium text-ink-800">Student activity</td>
+                                  <td className="py-2.5 px-3 sm:px-4 text-ink-600">Student activity</td>
+                                  <td className="py-2.5 px-3 sm:px-4 font-bold text-ink-800">{formatBDTFull(termActivityFee)}</td>
+                                  <td className="py-2.5 px-3 sm:px-4 text-ink-600">Per term</td>
+                                  <td className="py-2.5 px-3 sm:px-4"></td>
+                                </tr>
+                                <tr>
+                                  <td className="py-2.5 px-3 sm:px-4 font-medium text-ink-800">Tuition Fee</td>
+                                  <td className="py-2.5 px-3 sm:px-4 text-ink-600">Tuition</td>
+                                  <td className="py-2.5 px-3 sm:px-4 font-bold text-ink-800">{formatBDTFull(o.tuitionPerCredit)}</td>
+                                  <td className="py-2.5 px-3 sm:px-4 text-ink-600">Per credit ({o.totalCredits} cr)</td>
+                                  <td className="py-2.5 px-3 sm:px-4"></td>
+                                </tr>
+                                <tr>
+                                  <td className="py-2.5 px-3 sm:px-4 font-medium text-ink-800">Lab & Practical</td>
+                                  <td className="py-2.5 px-3 sm:px-4 text-ink-600">Lab</td>
+                                  <td className="py-2.5 px-3 sm:px-4 font-bold text-ink-800">{formatBDTFull(labFee)}</td>
+                                  <td className="py-2.5 px-3 sm:px-4 text-ink-600">Per course</td>
+                                  <td className="py-2.5 px-3 sm:px-4 text-right">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                                      Not included in total
+                                    </span>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="py-2.5 px-3 sm:px-4 font-medium text-ink-800">Computer & Simulation Lab</td>
+                                  <td className="py-2.5 px-3 sm:px-4 text-ink-600">Lab</td>
+                                  <td className="py-2.5 px-3 sm:px-4 font-bold text-ink-800">৳2,000</td>
+                                  <td className="py-2.5 px-3 sm:px-4 text-ink-600">Per course</td>
+                                  <td className="py-2.5 px-3 sm:px-4 text-right">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                                      Not included in total
+                                    </span>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+
+                        {/* Notes */}
+                        <div className="pt-2 text-xs text-ink-600 leading-relaxed border-t border-ink-100 flex gap-2">
+                          <span className="font-bold text-ink-700 shrink-0">Notes:</span>
+                          <span>
+                            Lab and studio fees are listed on the official fee schedule as 'Applicable as per curriculum' depending on practical coursework taken each semester. The Student Activities and Facilities Fee is charged per regular semester. Each optional Summer semester a student registers for follows standard credit fees.
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 

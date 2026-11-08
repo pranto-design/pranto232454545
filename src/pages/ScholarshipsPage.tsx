@@ -1,21 +1,49 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Award, Filter, GraduationCap } from 'lucide-react';
-import { scholarships, getUniversityById, programs } from '@/data/sampleData';
+import { scholarships as sampleScholarships, getUniversityById, programs } from '@/data/sampleData';
 import { UniversityLogo, VerificationBadge, EmptyState } from '@/components/ui';
+import { universityCmsService } from '@/services/universityCmsService';
+import type { Scholarship } from '@/types';
 
 export default function ScholarshipsPage() {
   const [gpaFilter, setGpaFilter] = useState(0);
   const [programFilter, setProgramFilter] = useState('');
   const [uniFilter, setUniFilter] = useState('');
+  const [scholarshipsList, setScholarshipsList] = useState<Scholarship[]>(sampleScholarships);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadScholarships() {
+      try {
+        const live = await universityCmsService.getScholarships();
+        if (live && live.length > 0 && isMounted) {
+          setScholarshipsList(live);
+        }
+      } catch (err) {
+        console.warn('Error loading dynamic scholarships:', err);
+      }
+    }
+    loadScholarships();
+
+    const handleUpdate = () => loadScholarships();
+    window.addEventListener('univara_cms_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('univara_cms_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
 
   const filtered = useMemo(() => {
-    return scholarships.filter((s) => {
+    return scholarshipsList.filter((s) => {
       if (gpaFilter > 0 && s.gpaRequirement > gpaFilter) return false;
       if (uniFilter && s.universityId !== uniFilter) return false;
       return true;
     });
-  }, [gpaFilter, uniFilter]);
+  }, [gpaFilter, uniFilter, scholarshipsList]);
 
   return (
     <div className="container-page py-10">

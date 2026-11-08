@@ -1,8 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Search, X, MapPin, Award, GraduationCap } from 'lucide-react';
-import { universities, programs, formatBDT } from '@/data/sampleData';
+import { universities as sampleUniversities, programs, formatBDT } from '@/data/sampleData';
 import { UniversityCard, EmptyState } from '@/components/ui';
-import type { Division } from '@/types';
+import type { Division, University } from '@/types';
+import { universityCmsService } from '@/services/universityCmsService';
 
 const divisions: Division[] = ['Dhaka', 'Chattogram', 'Khulna', 'Rajshahi', 'Sylhet', 'Barishal', 'Rangpur', 'Mymensingh'];
 
@@ -11,25 +12,51 @@ export default function UniversitiesPage() {
   const [division, setDivision] = useState('');
   const [program, setProgram] = useState('');
   const [tuitionMax, setTuitionMax] = useState(0);
+  const [universitiesList, setUniversitiesList] = useState<University[]>(sampleUniversities);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadUnis() {
+      try {
+        const live = await universityCmsService.getUniversities();
+        if (live && live.length > 0 && isMounted) {
+          setUniversitiesList(live as University[]);
+        }
+      } catch (err) {
+        console.warn('Error loading dynamic universities on listing page:', err);
+      }
+    }
+    loadUnis();
+
+    const handleUpdate = () => loadUnis();
+    window.addEventListener('univara_cms_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('univara_cms_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
 
   const filtered = useMemo(() => {
-    let list = [...universities];
+    let list = [...universitiesList];
     if (search) {
       const q = search.toLowerCase();
       list = list.filter((u) =>
         u.name.toLowerCase().includes(q) ||
         u.shortName.toLowerCase().includes(q) ||
-        u.popularPrograms.some((p) => p.toLowerCase().includes(q)),
+        (u.popularPrograms && u.popularPrograms.some((p) => p.toLowerCase().includes(q))),
       );
     }
     if (division) list = list.filter((u) => u.division === division);
-    if (program) list = list.filter((u) => u.popularPrograms.includes(program));
+    if (program) list = list.filter((u) => u.popularPrograms && u.popularPrograms.includes(program));
     if (tuitionMax > 0) list = list.filter((u) => u.tuitionMin <= tuitionMax);
 
-    list.sort((a, b) => b.reviewCount - a.reviewCount); // Default popular sort
+    list.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0)); // Default popular sort
 
     return list;
-  }, [search, division, program, tuitionMax]);
+  }, [search, division, program, tuitionMax, universitiesList]);
 
   const resetFilters = () => {
     setSearch(''); setDivision(''); setProgram(''); setTuitionMax(0);
@@ -41,7 +68,7 @@ export default function UniversitiesPage() {
     <div className="container-page py-10">
       <div className="mb-6">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-ink-900">Private Universities in Bangladesh</h1>
-        <p className="text-xs sm:text-sm text-ink-500 mt-2">Browse and compare {universities.length}+ private universities. Filter by location, program, tuition, and more.</p>
+        <p className="text-xs sm:text-sm text-ink-500 mt-2">Browse and compare {universitiesList.length}+ private universities. Filter by location, program, tuition, and more.</p>
       </div>
 
       {/* Search + sort bar */}

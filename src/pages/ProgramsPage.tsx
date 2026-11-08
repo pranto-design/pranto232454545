@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, BookOpen, ArrowRight } from 'lucide-react';
-import { programs, universities, formatBDT } from '@/data/sampleData';
+import { programs as samplePrograms, universities, formatBDT } from '@/data/sampleData';
 import { EmptyState } from '@/components/ui';
-import type { ProgramCategory } from '@/types';
+import type { ProgramCategory, Program } from '@/types';
+import { universityCmsService } from '@/services/universityCmsService';
 
 const categories: (ProgramCategory | 'All')[] = [
   'All', 'Engineering', 'Computer Science', 'Business', 'Pharmacy',
@@ -13,14 +14,40 @@ const categories: (ProgramCategory | 'All')[] = [
 export default function ProgramsPage() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<(typeof categories)[number]>('All');
+  const [programsList, setProgramsList] = useState<Program[]>(samplePrograms);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadPrograms() {
+      try {
+        const live = await universityCmsService.getPrograms();
+        if (live && live.length > 0 && isMounted) {
+          setProgramsList(live);
+        }
+      } catch (err) {
+        console.warn('Error loading dynamic programs:', err);
+      }
+    }
+    loadPrograms();
+
+    const handleUpdate = () => loadPrograms();
+    window.addEventListener('univara_cms_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('univara_cms_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
 
   const filtered = useMemo(() => {
-    return programs.filter((p) => {
+    return programsList.filter((p) => {
       if (category !== 'All' && p.category !== category) return false;
       if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
       return true;
     });
-  }, [search, category]);
+  }, [search, category, programsList]);
 
   return (
     <div className="container-page py-10">
