@@ -53,7 +53,7 @@ export default function ProgramsPage() {
     <div className="container-page py-10">
       <div className="mb-6">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-ink-900">Academic Programs</h1>
-        <p className="text-xs sm:text-sm text-ink-500 mt-2">Search across {programs.length}+ programs offered by private universities in Bangladesh.</p>
+        <p className="text-xs sm:text-sm text-ink-500 mt-2">Search across {programsList.length}+ programs offered by private universities in Bangladesh.</p>
       </div>
 
       <div className="card p-4 mb-6">

@@ -261,6 +261,16 @@ export default function UniversityProfilePage() {
 
   const relatedUnis = useMemo(() => universities.filter((u) => u.id !== uni?.id).slice(0, 3), [uni]);
 
+  const tuitionChartData = useMemo(() => {
+    return offerings.slice(0, 6).map((o) => {
+      const p = getProgramById(o.programId);
+      return {
+        name: (p?.name || 'Program').slice(0, 8),
+        Tuition: Math.round(o.totalTuitionEstimate / 100000) * 100000,
+      };
+    });
+  }, [offerings]);
+
   if (!uni) {
     return (
       <div className="container-page py-24">
@@ -280,16 +290,6 @@ export default function UniversityProfilePage() {
     { q: `How long does the typical undergraduate program take?`, a: `Most undergraduate programs at ${uni.name} are 4 years (8 semesters). Architecture programs are typically 5 years. Timelines may vary slightly based on credit load, summer semesters, and individual progress.` },
     { q: `Is ${uni.name} accredited by UGC?`, a: `Yes — ${uni.name} is fully approved and accredited by the University Grants Commission (UGC) of Bangladesh. ${uni.accreditation}` },
   ];
-
-  const tuitionChartData = useMemo(() => {
-    return offerings.slice(0, 6).map((o) => {
-      const p = getProgramById(o.programId);
-      return {
-        name: (p?.name || 'Program').slice(0, 8),
-        Tuition: Math.round(o.totalTuitionEstimate / 100000) * 100000,
-      };
-    });
-  }, [offerings]);
 
   const pieData = [
     { name: 'Tuition', value: 70, color: '#0F766E' },

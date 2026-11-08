@@ -66,7 +66,7 @@ export default function ScholarshipsPage() {
           </select>
           <select value={uniFilter} onChange={(e) => setUniFilter(e.target.value)} className="input sm:w-64">
             <option value="">All Universities</option>
-            {[...new Set(scholarships.map((s) => s.universityId))].map((id) => {
+            {[...new Set(scholarshipsList.map((s) => s.universityId))].map((id) => {
               const u = getUniversityById(id);
               return u ? <option key={id} value={id}>{u.name}</option> : null;
             })}
